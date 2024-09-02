@@ -1,0 +1,70 @@
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MealHouse Login</title>
+  <link rel="stylesheet" href="/styles/user/signup.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+ 
+  <div class="background"></div>
+  <div class="login-container" id="loginContainer">
+    <div class="login-header">
+      <h2>Welcome to <span>MealHouse</span></h2>
+      <h2 style="color:rgb(49, 170, 140);">Signup for an account</h2>
+      <% if (message) {%>
+        <p style="color: rgb(255, 116, 2); font-size: 18px;" class="error-message"><%= message%></p>
+        <%}%>
+    </div>
+    <div class="login-form">
+      <form action="/userSignup" method="post" novalidate>
+
+
+        <label for="username">Username</label>
+
+        <div class="input-group">
+          <i class="fas fa-user"></i>
+          <input type="username" name="username" required>
+        </div>
+
+
+        <label for="email">Email</label>
+
+        <div class="input-group">
+          <i class="fas fa-envelope"></i>
+
+          <input type="email" name="email" required>
+        </div>
+
+
+
+
+        <label for="referedcode">Referal Code (Optional)</label>
+
+        <div class="input-group">
+          <i class="fas fa-share-alt"></i>
+
+          <input type=text" id="" name="referedcode" >
+        </div>
+
+
+
+
+        <label for="password">password</label>
+
+        <div class="input-group">
+          <i class="fas fa-lock"></i>
+          <input type="password" name="password" required>
+        </div>
+       
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+    <div class="signup-link">
+      Already have an account ? <a href="/"><button type="button">Login</button></a>
+    </div>
+  </div>
+</body>
+
+</html>

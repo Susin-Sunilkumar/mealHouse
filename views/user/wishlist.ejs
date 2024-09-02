@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Shopping Cart</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .input-group {
+            position: relative;
+        }
+
+        #suggestions-container {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: calc(100% - 2px);
+            /* Adjust the width to fit the input */
+            padding-left: 10px;
+            background-color: #fff;
+            border: 1px solid #ced4da;
+            border-radius: 0 0 0.25rem 0.25rem;
+            z-index: 1000;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .input-group:focus-within #suggestions-container {
+            display: block;
+        }
+
+        .suggestion-item {
+            padding: 0.5rem;
+            cursor: pointer;
+        }
+
+        .suggestion-item:hover {
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <a class="navbar-brand text-light" href="/userhome">MealHouse</a>
+
+        <form class="d-flex mx-auto col-md-5">
+            <div class="input-group col-md-12">
+                <input class="form-control" type="search" placeholder="Search" aria-label="Search" id="search"
+                    oninput="searchFunction()">
+                <div id="suggestions-container" class="suggestions-container"></div>
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-search text-primary"></i></span>
+                </div>
+            </div>
+        </form>
+
+        <ul class="navbar-nav ">
+            <li class="nav-item">
+                <a class="nav-link text-light" href="/shop">Shop</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-light" href="/wishlist">Wishlist</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-light" href="/cart"><i class="fas fa-shopping-cart"></i> Cart</a>
+            </li>
+            <li class="nav-item">
+            <li class="nav-item"><a class="nav-link text-light" href="/userprofile/<%= userId %>"><i
+                        class="fas fa-user"></i> Account</a></li>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-light" href="/logout">Logout</a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="container mt-5">
+        <h1 class="text-primary">Wishlist</h1>
+        <hr>
+
+        <div class="row">
+            <div class="col-md-8">
+                <% if (wishlist.length> 0) { %>
+                    <% wishlist.forEach(( product, index )=> { %>
+                        <div class="card mb-6 mb-3">
+                            <div class="card-body">
+                                <div class="row mb-3 col-md-12">
+                                    <div class="col-md-3">
+                                        <img src="<%= product.image %>" alt="<%= product.product %>"
+                                            class="img-fluid" style="height: 120px; width: 100px;">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h5>
+                                            <%= product.product %>
+                                        </h5>
+                                        <p><strong>Price:</strong> ₹ <%= product.price %>
+                                        </p>
+                                    </div>
+                                    <div class="col-md-5 d-flex flex-row justify-content-between align-items-center">
+                                        <!-- <button class="btn btn-danger">Remove</button> -->
+                                            <a href="/cart/addtocartfromwishlist/<%= product.productid %>"
+                                                class="btn btn-primary ml-5">Add to cart</a>
+                                            <a href="/wishlist/removefromwishlist/<%= product.productid %>"
+                                                class="btn btn-danger">Remove</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <% }); %>
+                            <% } else { %>
+                                <div class="col">
+                                    <h1 class="text-center">No prducts!</h1>
+                                </div>
+                                <% } %>
+            </div>
+        </div>
+
+        <script>
+            function handleClickOutside(event) {
+            const suggestionsContainer = document.getElementById('suggestions-container');
+            const searchInput = document.getElementById('search');
+
+            if (event.target !== searchInput && !searchInput.contains(event.target)) {
+                suggestionsContainer.style.display = 'none'; // Hide the suggestions when clicking outside
+            }
+        }
+
+        function searchFunction() {
+            const searchInput = document.getElementById('search').value;
+            // Make an AJAX request to your server with the search query
+            fetch(`/search?search=${searchInput}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Update the suggestions box with the received data
+                    const suggestionsContainer = document.getElementById('suggestions-container');
+                    suggestionsContainer.innerHTML = ''; // Clear previous suggestions
+
+                    if (data.products.length > 0 || data.categories.length > 0) {
+                        data.products.forEach(product => {
+                            const suggestionDiv = document.createElement('div');
+                            suggestionDiv.classList.add('suggestion-item', 'larger-size');
+                            suggestionDiv.textContent = product.productname;
+                            suggestionDiv.addEventListener('click', () => {
+                                window.location.href = `/product/${product._id}`;
+                            });
+                            suggestionsContainer.appendChild(suggestionDiv);
+                        });
+
+                        data.categories.forEach(category => {
+                            const suggestionDiv = document.createElement('div');
+                            suggestionDiv.classList.add('suggestion-item', 'larger-size');
+                            suggestionDiv.textContent = category.category;
+                            suggestionDiv.addEventListener('click', () => {
+                                window.location.href = `/shop/${category.category}`;
+                            });
+                            suggestionsContainer.appendChild(suggestionDiv);
+                        })
+                        suggestionsContainer.style.display = 'block';
+                    } else {
+                        const noSuggestionDiv = document.createElement('div');
+                        noSuggestionDiv.classList.add('suggestion-item', 'larger-size');
+                        noSuggestionDiv.textContent = 'No products found.';
+                        suggestionsContainer.appendChild(noSuggestionDiv);
+                        suggestionsContainer.style.display = 'block';
+                    }
+                    document.addEventListener('click', handleClickOutside);
+                })
+                // .then(data => {
+                //     // Update the table with the received data
+                //     const carosal = document.getElementById('carouselExampleIndicators');
+                //     carosal.innerHTML = ''; // Clear the carosal
+
+                //     const container = document.getElementById('productscontainer');
+                //     container.innerHTML = ''; // Clear the container
+
+                //     const heading = document.getElementById('heading');
+                //     heading.innerHTML = ''; // Clear the heading
+
+                //     if (data.length > 0) {
+                //         data.forEach(product => {
+                //             const productDiv = document.createElement('div');
+                //             productDiv.classList.add('col-md-3');
+                //             productDiv.innerHTML = `
+                //     <div class="card mb-3 position-relative">
+                //         <!-- Heart icon positioned at top-right -->
+                //         <button class="btn btn-link position-absolute top-0 end-0 mt-2 me-2 wishlist-btn"
+                //             onclick="toggleWishlist(this)">
+                //             <i class="far fa-heart"></i>
+                //         </button>
+
+                //         <div class="col-md-10 mx-auto mt-2 " >
+                //             <img style="max-height: 200px; max-width: 200px;" src="/static/${product.image[0]}"
+                //                 class="card-img-top" alt="Product 1">
+                //         </div>
+                //         <div class="card-body" >
+                //             <div style="height: 50px;">
+                //                 <h5 class="card-title">
+                //                     ${product.productname}
+                //                 </h5>
+                //             </div>
+
+                //             <p class="card-text">Price: ₹ ${product.price}
+                //             </p>
+                //             <a href="/product/${product._id}" class="btn btn-primary">View</a>
+                //         </div>
+                //     </div>
+
+                // `;
+                //             productscontainer.appendChild(productDiv);
+                //         });
+                //     } else {
+                //         // Handle case where no products are found
+                //         const noResultDiv = document.createElement('div');
+                //         noResultDiv.textContent = 'No products found.';
+                //         productsContainer.appendChild(noResultDiv);
+                //     }
+                // })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+        </script>
+
+
+
+        <!-- Include Bootstrap JS -->
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,34 @@
+.outer-div {
+
+  background-color: rgba(255, 255, 255, 0);
+
+  margin: 1rem 1rem 1rem 1rem;
+}
+.slider {  
+
+  background-color: #41070796; /* Custom background color */
+  border-radius: 2rem;
+  display: flex;
+  justify-content: space-evenly;
+  width: auto;
+  flex-wrap: wrap;
+  margin: 1rem 1rem 1rem 1rem;
+  padding: 0.5rem 1rem 0.5rem 1rem;
+}
+
+.wrap-filter,
+.for-filter {
+ 
+  background-color: rgba(238, 130, 238, 0);
+  
+}
+
+a {
+  text-decoration: none;
+  color: rgb(247, 236, 236);
+}
+a:hover{
+  text-decoration: none;
+  color: bisque;
+}
+

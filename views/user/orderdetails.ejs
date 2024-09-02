@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>E-Cart</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> -->
+    <style>
+    </style>
+</head>
+
+<body>
+    <div class="container mt-4">
+        <div class="row">
+          <div class="col-md-8">
+            <!-- Delivery Address Section -->
+            <div class="card mb-4">
+              <div class="card-header">
+                Delivery Address
+              </div>
+              <div class="card-body">
+                <!-- Display delivery address details here -->
+                <p>First Name: <%= order.addressid.firstname %></p>
+                <p>Last Name: <%= order.addressid.lastname %></p>
+                <p>Address: <%= order.addressid.address %></p>
+                <p>City: <%= order.addressid.city %></p>
+                <p>State: <%= order.addressid.state %></p>
+                <p>Pincode: <%= order.addressid.pincode %></p>
+                <p>Phone: <%= order.addressid.phone %></p>
+              </div>
+            </div>
+    
+            <!-- Product Info Table -->
+            <div class="card">
+              <div class="card-header">
+                Product Information
+              </div>
+              <div class="card-body">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Product Name</th>
+                      <th>Quantity</th>
+                      <th>Price</th>
+                      <th>Discount</th>
+                      <th>Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% let amount = 0 %>
+                    <% order.products.forEach( product=> { %>
+                        <% if(product.productid == productid) { %>
+                    <tr>
+                        <td>
+                            <%= product.product %>
+                        </td>
+                        <td>
+                            <%= product.quantity %>
+                        </td>
+                        <td>
+                            ₹ <%= product.price %>
+                        </td>
+                        <td>
+                            - ₹ <%= product.discount %>
+                        </td>
+                        <td>
+                            <% amount = (product.price * product.quantity) - product.discount  %>
+                            ₹ <%= amount %>
+                        </td>
+                    </tr>
+                    <% } %>
+                    <% }); %>
+                    <tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+    
+          <!-- Order Summary Section -->
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-header">
+                Order Summary
+              </div>
+              <div class="card-body">
+                <!-- Display order summary details here -->
+                <p>Total Amount: ₹ <%= amount %></p>
+                <p>Payment Method: <%= order.paymentmethord %></p>
+                <!-- <a  href="/order/invoice/<%= order._id %>/<%= productid %>" class="btn btn-primary btn-block">Download Invoice</a> -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+      <!-- Bootstrap JS and jQuery (if needed) -->
+      <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

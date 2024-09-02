@@ -1,0 +1,26 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <a class="navbar-brand text-light" href="/userhome">E-Cart</a>
+  
+    <form class="d-flex mx-auto col-md-5">
+        <div class="input-group col-md-12">
+            <input class="form-control" type="search" placeholder="Search" aria-label="Search" id="search"
+                oninput="searchFunction()">
+            <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fas fa-search text-primary"></i></span>
+            </div>
+        </div>
+    </form>
+  
+    <ul class="navbar-nav ">
+        <li class="nav-item">
+            <a class="nav-link text-light" href="/cart"><i class="fas fa-shopping-cart"></i> Cart</a>
+        </li>
+        <li class="nav-item">
+        <li class="nav-item"><a class="nav-link text-light" href="/userprofile/<%= userId %>"><i
+                    class="fas fa-user"></i> Account</a></li>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-light" href="/logout">Logout</a>
+        </li>
+    </ul>
+  </nav>

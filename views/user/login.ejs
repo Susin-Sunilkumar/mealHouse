@@ -1,0 +1,46 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MealHouse Login</title>
+    <link rel="stylesheet" href="/styles/user/login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  </head>
+  
+  <body>
+   
+    <div class="background"></div>
+    <div class="login-container" id="loginContainer">
+      <div class="login-header">
+        <h2>Welcome to <span>MealHouse</span></h2>
+        <p>Login to your account</p>
+        <% if (message) {%>
+          <p style="color: rgb(255, 102, 0); font-size: large;" class="error-message"><%= message%></p>
+          <%}%>
+      </div>
+      <div class="login-form">
+        <form action="/" method="post" novalidate>
+          <label for="email">Email</label>
+          <div class="input-group">
+            
+            <i class="fas fa-user"></i>
+          
+            <input type="email" name="email" value="susin200306@gmail.com" >
+          </div>
+          <label for="password">password</label>
+          <div class="input-group">
+            <i class="fas fa-lock"></i>
+           
+            <input type="password" name="password" value="asdf">
+          </div>
+         
+          <button type="submit">Login</button>
+        </form>
+      </div>
+      <div class="signup-link">
+        Don't have an account? <a href="/userSignup"><button type="button">Signup</button></a>
+      </div>
+    </div>
+  </body>
+  
+  </html>
+  

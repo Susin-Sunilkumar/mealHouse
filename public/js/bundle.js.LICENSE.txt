@@ -1,0 +1,13 @@
+//! Checking if user is there in local storage
+
+//! below is the code for opening the Modal for user register .
+
+//! below is the script for opening the modal for forgot password
+
+//! below is the script for toggling the password to show or hide
+
+//! function for checking if the mouse is clicked on the window-object
+
+//! function for closing the modal
+
+//! function for opening the modal

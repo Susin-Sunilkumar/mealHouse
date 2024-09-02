@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Admin Dashboard</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        #sidebar {
+            background-color: #fff;
+            height: 93vh;
+        }
+
+        .custom-border {
+            border: 2px solid #3883f4;
+            border-radius: 5px;
+        }
+
+        .maindiv {
+            height: 93vh;
+            overflow-y: scroll;
+        }
+
+        #sidebar a.nav-link:hover {
+            color: #3883f4 !important;
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+
+    <div class="container-fluid">
+        <div class="row mt-4 ml-2">
+            <!-- Sidebar -->
+            <nav id="sidebar" class="col-md-4 col-lg-2 d-md-block sidebar custom-border">
+                <div class="position-sticky">
+                    <!-- Profile Photo -->
+                    <div class="text-center mt-3">
+                        <% if (user.profilePhoto) { %>
+                            <!-- If the user has a profile photo -->
+                            <img src="<%= user.profilePhoto %>" alt="Profile Photo" class="img-fluid rounded-circle"
+                                style="width: 80px; height: 80px;">
+                            <% } else { %>
+                                <!-- If the user doesn't have a profile photo, display a default one -->
+                                <img src="img/profilephoto.jpg" alt="Default Profile Photo"
+                                    class="img-fluid rounded-circle" style="width: 80px; height: 80px;">
+                                <% } %>
+                    </div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item mt-4">
+                            <a class="nav-link text-dark" href="/userprofile/<%= userId %>">
+                                Profile
+                            </a>
+                        </li>
+                        <li class="nav-item mt-4">
+                            <a class="nav-link text-dark" href="/useraddress">
+                                Address settings
+                            </a>
+                        </li>
+                        <li class="nav-item mt-4">
+                            <a class="nav-link text-dark" href="/orders">
+                                Orders
+                            </a>
+                        </li>
+                        <li class="nav-item mt-4">
+                            <a class="nav-link text-primary" href="/wallet">
+                                Wallet
+                            </a>
+                        </li>
+                        <li class="nav-item mt-4">
+                            <a class="nav-link text-dark" href="/userhome">
+                                E-Cart
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="col-md-8 col-lg-10">
+                <div class="custom-border maindiv p-5">
+                    <div class="container">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h1 class="mb-0 text-primary">Wallet</h1>
+                        </div>
+                        <br>
+                        <p><strong>Balance:</strong> ₹ <%= user.wallet %>
+                        <br><br>
+                        <!-- Add your user data tables here -->
+                        <table class="table ">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userTableBody">
+                                <% if(wallethistory.length> 0) { %>
+                                    <% wallethistory.forEach( history => { %>
+                                        <tr>
+                                            <td>
+                                                <% 
+                                                // Formatting the date directly
+                                                const formattedDate = new Date(history.date).toLocaleDateString('en-US', {
+                                                    weekday: 'short',
+                                                    month: 'short',
+                                                    day: 'numeric',
+                                                    year: 'numeric'
+                                                });
+                                                %>
+                                                <%= formattedDate %>
+                                            </td>
+                                            <td>
+                                                <% if (history.creditordebit === 'credit') { %>
+                                                    <span style="color: rgb(10, 205, 10);"><i class="fas fa-plus-circle"></i> + ₹<%= history.amount %></span>
+                                                <% } else if (history.creditordebit === 'debit') { %>
+                                                    <span style="color: red;"><i class="fas fa-minus-circle"></i> - ₹<%= history.amount %></span>
+                                                <% } %>
+                                            </td>
+                                        </tr>
+                                        <% }); %>
+                                            <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+        </div>
+        </main>
+    </div>
+    </div>
+
+    <!-- footer -->
+    <div class="mt-4">
+    </div>
+
+    <!-- Modal HTML -->
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog"
+        aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Cancel</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to cancel this order?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="confirmReturnModal" tabindex="-1" role="dialog"
+        aria-labelledby="confirmReturnModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmReturnModalLabel">Confirm Cancel</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to return this product?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-danger" id="confirmReturnBtn">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openConfirmCancelModal(url) {
+        $('#confirmDeleteModal').modal('show')
+        $('#confirmDeleteBtn').click(function() {
+            window.location.href = url
+        });
+    }
+        function openConfirmReturnModal(url) {
+        $('#confirmReturnModal').modal('show')
+        $('#confirmReturnBtn').click(function() {
+            window.location.href = url
+        });
+    }
+    </script>
+
+    <!-- Include Bootstrap JS (jQuery and Popper.js required) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
