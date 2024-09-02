@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>User - Details</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        #sidebar {
+            background-color: #fff;
+            height: 93vh;
+        }
+
+        .custom-border {
+            border: 2px solid #3883f4;
+            border-radius: 5px;
+        }
+
+        .maindiv {
+            height: 93vh;
+        }
+
+        #sidebar a.nav-link:hover {
+            color: #3883f4 !important;
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+
+    <div class="container-fluid">
+        <div class="row mt-4 ml-2">
+            <!-- Sidebar -->
+            <nav id="sidebar" class="col-md-4 col-lg-2 d-md-block sidebar custom-border">
+                <div class="position-sticky">
+                    <!-- Profile Photo -->
+                    <div class="text-center mt-3">
+                        <% if (user.profilePhoto) { %>
+                            <!-- If the user has a profile photo -->
+                            <img src="<%= user.profilePhoto %>" alt="Profile Photo" class="img-fluid rounded-circle" style="width: 80px; height: 80px;">
+                        <% } else { %>
+                            <!-- If the user doesn't have a profile photo, display a default one -->
+                            <img src="/img/profilephoto.jpg" alt="Default Profile Photo" class="img-fluid rounded-circle" style="width: 80px; height: 80px;">
+                        <% } %>
+                    </div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item mt-4">
+                            <a class="nav-link text-primary" href="#">
+                                Profile
+                            </a>
+                        </li>
+                        <li class="nav-item mt-4">
+                            <a class="nav-link text-dark" href="/useraddress">
+                                Address settings
+                            </a>
+                        </li>
+                        <li class="nav-item mt-4">
+                            <a class="nav-link text-dark" href="/orders">
+                                Orders
+                            </a>
+                        </li>
+                        <li class="nav-item mt-4">
+                            <a class="nav-link text-dark" href="/wallet">
+                                Wallet
+                            </a>
+                        </li>
+                        <li class="nav-item mt-4">
+                            <a class="nav-link text-dark" href="/userhome">
+                              MealHouse
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="col-md-8 col-lg-10">
+                <div class="custom-border maindiv p-5">
+                    <div class="container">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h1 class="mb-0 text-primary">Hello, <%= user.username %></h1>
+                        </div>
+                        <br>
+                        <h2>Personal Information</h2>
+                        <!-- User Information -->
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <h5>Basic Details</h5>
+                                <p><strong>Name:</strong>  <%= user.username %></p>
+                                <p><strong>Email:</strong>  <%= user.email %></p>
+                                <p><strong>Wallet:</strong> ₹ <%= user.wallet %></p>
+                                <p><strong>Referal Code:</strong> <%= user.referalcode %></p>
+                                <!-- <p><strong>Phone:</strong> +1234567890</p> -->
+                            </div>
+                            <!-- <div class="col-md-6">
+                                <h5>Address</h5>
+                                <p><strong>Street:</strong> 123 Main St</p>
+                                <p><strong>City:</strong> Anytown</p>
+                                <p><strong>Country:</strong> Country Name</p>
+                            </div> -->
+                        </div>
+                        <!-- Additional Information -->
+                        <!-- <div class="mt-4">
+                            <h5>Additional Details</h5>
+                            <p><strong>Date of Birth:</strong> January 1, 1990</p>
+                            <p><strong>Gender:</strong> Male</p>
+                        </div> -->
+                    </div>
+                </div>
+        </div>
+        </main>
+    </div>
+    </div>
+
+    <!-- footer -->
+    <div class="mt-4">
+    </div>
+
+    <!-- Include Bootstrap JS (jQuery and Popper.js required) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

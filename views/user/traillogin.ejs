@@ -1,0 +1,255 @@
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MealHouse Login</title>
+  <link rel="icon" href="/img/Designer (2).png">
+
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+  <!--styles from me-->
+
+  <link rel="stylesheet" href="/styles/user/trail.css">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <link rel="stylesheet" href="/sweetalert2/sweetalert2.css">
+
+</head>
+
+<body>
+  <div class="login-container" id="loginContainer">
+    <div class="login-header">
+      <h2>Welcome to <span>MealHouse</span></h2>
+      <p>Login to your account</p>
+      <% if (message) {%>
+      <p style="color: rgb(255, 102, 0); font-size: large;" class="error-message">
+        <%= message %>
+      </p>
+      <% } %>
+    </div>
+    <div class="login-form">
+      <form id="loginForm" novalidate>
+
+
+
+
+        <!----------------------------------------------------- email for login -->
+
+
+        <div class="input-group">
+
+
+          <input type="text" id="email" name="email" value="susin@gmail.com" class="input-field" oninput="emailChecker(this.value,document.getElementById('patternIndicatorEmailLogin'),document.getElementById('email-error'))" required>
+
+          <label for="email" class="label">Email</label>
+
+
+          <i class="fas fa-user" style="cursor: default;"></i>
+
+
+        </div>
+        <div id="patternIndicatorEmailLogin" class="pattern-indicator"></div>
+
+
+
+
+
+        <!---------------------------------------------------------- password for login -->
+
+
+
+
+        <div class="input-group only-for-password-group ">
+
+          <input type="password" id="password" class="input-field" oninput="checkPasswordStrength(this.value)" required>
+          <label for="password" class="label">Password</label>
+          <i class="bx bx-hide icon" id="togglePassword" onclick="passwordToggler(document.getElementById('togglePassword'),document.getElementById('password'))"></i>
+        </div>
+
+        <div id="passwordStrength" class="password-strength"></div>
+
+
+
+
+
+        <!-- remember checkbox and forgot-link for login page -->
+
+        <div class="remember-forgot">
+
+
+          <div class="remember-me">
+            <input id="remember" type="checkbox" class="for-check-box">
+            <label for="remember"> Remember me </label>
+          </div>
+
+
+          <div class="forgot">
+            <a href="" class="for-forgot-password">Forgot password ?</a>
+          </div>
+
+
+        </div>
+
+
+
+
+        <!-- the button for login -->
+
+        <button class="for-login-button" type="button" onclick="handleLogin()">Login</button>
+      </form>
+    </div>
+
+
+
+    <!-- links for signin at the login page -->
+
+    <div class="div-for-login-with">
+      <a href="https://accounts.google.com/" class="for-google" target="_blank" aria-label="Login with Google">
+        <i class="fab fa-google"></i>
+      </a>
+      <a href="https://www.facebook.com/" class="for-facebook" target="_blank" aria-label="Login with Facebook">
+        <i class="fab fa-facebook-f"></i>
+      </a>
+      <a href="https://appleid.apple.com/" class="for-apple" target="_blank" aria-label="Login with Apple">
+        <i class="fab fa-apple"></i>
+      </a>
+      <a href="" class="for-x" target="_blank" aria-label="Login with X (Twitter)">
+        <i class="fa-brands fa-x-twitter"></i> <!-- Adjust this to the appropriate icon for X (Twitter) -->
+      </a>
+    </div>
+
+
+
+    <!-- link for the registering of new users -->
+
+
+    <div class="signup-link">
+      Don't have an account? <a class="link-for-register" href="/userSignup"><button type="button">Register
+          Here</button></a>
+    </div>
+  </div>
+
+
+
+
+
+  <!--    below are the modalsss -->
+
+
+  <!-- for the forgot password  -->
+
+  <div id="forgotPasswordModal" class="modal-for-forgot-password">
+    <div class="modal-content">
+
+      <span class="close" onclick="closeModal('forgotPasswordModal')">&times;</span>
+      <h2 style="margin: 0rem 0rem 3rem 0rem;">Forgot Password</h2>
+
+      <div class="input-group">
+        <input type="text" id="forgotEmail" class="input-field" oninput="emailChecker(this.value,patternIndicatorRegister)" required>
+        <label for="forgotEmail" class="label">Email</label>
+      </div>
+
+      <div id="patternIndicatorForgotPassword" class="pattern-indicator"></div>
+
+      <div class="div-holding-the-reset-password">
+        <button class="reset-password" type="submit" onclick="handleForgotPassword()">Reset Password</button>
+
+      </div>
+
+
+    </div>
+  </div>
+
+
+
+
+
+  <!-- below is the model for the register -->
+
+
+  <div id="registerModal" class="modal-for-register">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('registerModal')">x</span>
+
+
+
+      <h2>Register</h2>
+
+
+      <!-- username for register -->
+      <div class="input-group for-register">
+        <input type="text" id="registerUser" class="input-field" oninput="userNameChecker(this.value,document.getElementById('registerUser-error'))" required>
+        <label for="registerUser" class="label">Username</label>
+      </div>
+
+
+
+
+
+      <!-- Email for register -->
+      <div class="input-group for-register">
+
+        <input type="text" id="registerEmail" name="email" class="input-field" oninput="emailChecker(this.value,document.getElementById('patternIndicatorRegister'),document.getElementById('registerEmail-error'))" required>
+
+        <label for="email" class="label">Email</label>
+
+
+        <i class="fas fa-user" style="cursor: default;"></i>
+
+
+      </div>
+      <div id="patternIndicatorRegister" class="pattern-indicator"></div>
+
+
+
+
+
+      <!-- password for the register     -->
+      <div class="input-group for-register">
+
+        <input type="password" id="registerPassword" class="input-field" oninput="checkPasswordStrengthRegister(this.value)" onblur="clearErrorIfExist(this.value)" required>
+        <label for="password" class="label">Password</label>
+        <i class="bx bx-hide icon" id="togglePasswordRegister" onclick="passwordToggler(document.getElementById('togglePasswordRegister'),document.getElementById('registerPassword'))"></i>
+      </div>
+
+      <div id="passwordStrengthRegister" class="password-strength" "></div>
+
+
+
+<!-- referalCode for register -->
+      <div class=" input-group for-register">
+        <input type="text" id="referalCode" class="input-field" required>
+        <label for="referalCode" class="label">Referal Code</label>
+      </div>
+
+
+
+
+
+      <div class="div-holding-register-button">
+
+
+        <button class="button-for-register" onclick="handleRegister()" type="submit"> Register</button>
+
+      </div>
+
+
+    </div>
+  </div>
+
+
+
+
+
+  <!-- <script src="/sweetalert2/sweetalert2.all.min.js"></script> -->
+  <script src="/js/user/trailLogin.js"></script>
+  <script src="/sweetalert2/sweetalert2.js"></script>
+
+
+
+
+</body>
+
+</html>

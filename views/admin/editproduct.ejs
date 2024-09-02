@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MealHouse</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Roboto&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+ 
+
+    <style>
+        .image-container {
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .remove-button {
+            display: block;
+            margin-top: 5px;
+            cursor: pointer;
+            color: red;
+            color: aliceblue;
+            width: 16vh;
+        }
+
+        .save-button {
+            display: block;
+            margin-top: 5px;
+            width: 16vh;
+        }
+        .error-message{
+          color: red;
+        }
+    </style>
+</head>
+<body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
+
+<div class="text-center text-primary fw-bolder fs-3 mt-3">
+  edit PRODUCT
+</div>
+
+<div class="container-fluid col-md-7 d-flex justify-content-center">
+  <form action="/admin/editproduct/<%= product._id %>" method="POST" enctype="multipart/form-data" novalidate onsubmit="  return validateForm()">
+      
+    
+    <div class="mb-3">
+      <label for="productname" class="form-label">Product Name</label>
+      <input type="text" class="form-control" id="productname" name="productname" value="<%=product.productname%>" required />
+      <% if (errorMessage) { %>
+        <div id="productnameError" class="error-message" style="color: red;"><%= errorMessage %></div>
+      <% } %>  
+      <div id="productnameError" class="error-message"></div>
+    </div>
+
+    <div class="mb-4">
+      <label for="category" class="form-label">Category</label>
+      <select class="form-select" id="category" name="category" required>
+        <option><%= product.category.category %></option>
+        <% if(categories.length> 0) { %> <% categories.forEach(
+                          categorie=> { %>
+        <option value="<%= categorie._id %>">
+          <%= categorie.category %>
+        </option>   
+        <% }); %> <% } %>
+      </select>
+      <div id="categoryError" class="error-message"></div>
+    </div>
+
+
+    
+
+    <div class="mb-3">
+      <label class="form-label ">Ingredients</label>
+      <div id="ingredients-container">
+          <% if (product.ingredients && product.ingredients.length > 0) { %>
+              <% product.ingredients.forEach(function(ingredient, index) { %>
+                  <div class="input-group mb-3">
+                      <input type="text" class="form-control" name="ingredients[]" value="<%= ingredient %>" required>
+                      <button class="btn btn-danger remove-ingredient" type="button">Remove</button>
+                  </div>
+              <% }); %>
+          <% } %>
+      </div>
+      <button class="btn btn-primary" type="button" id="add-ingredient">Add an Ingredient</button>
+      <div id="ingredientsError" class="error-message"></div>
+  </div>
+
+
+
+
+
+
+        <div class="mb-3">
+                <label for="price" class="form-label">Price</label>
+                <input type="text" class="form-control" id="price" name="price" value="<%=product.price%>" required />
+                <div id="priceError" class="error-message"></div>
+              </div>
+
+              <div class="mb-3">
+                <label for="discription" class="form-label">Description</label>
+                <input type="text" class="form-control" id="description" name="description" value="<%=product.description%>" required />
+                <div id="descriptionError" class="error-message"></div>
+              </div>
+
+              <div class="mb-3">  
+                <label for="stock" class="form-label">Stock</label>
+                <input type="text" class="form-control" id="stock" name="stock" min="1" value="<%=product.stock%>" required />
+                <div id="stockError" class="error-message"></div>
+              </div>
+
+
+        
+    <div class="mb-3">
+      <label for="UrunImage" class="form-label">Product Image</label>zz
+      <input name="img" type="file" multiple class="form-control w-100" id="image" accept="image/*">
+      <div id="image-container"  class="mb-5 mt-5">
+
+
+        <% if (product.image && product.image.length > 0) { %>
+          <% product.image.forEach((image, index) => { %>
+            <div class="image-container">
+              <img src="<%= image %>" alt="<%= product.productname %>" data-index="<%= index %>">
+              <button type="button" class="remove-button btn btn-danger btn-sm" onclick="removeImage('<%= index %>', '<%= product._id %>')">Remove</button>
+            </div>
+          <% }); %>
+        <% } %>
+
+      </div>
+      
+            <div id="cropper-container" class="mt-3 mb-5"></div>
+            <br>  <span id="imgError" style="color: red;"></span>
+        </div>
+
+        <div class="mb-4">
+          <label for="isListed" class="form-label">IsListed</label>
+          <select class="form-select" id="isListed" name="isListed" required>
+            <option value="true" <%= product.isListed ? 'selected' : '' %>>True</option>
+            <option value="false" <%= !product.isListed ? 'selected' : '' %>>False</option>
+          </select>
+        </div>
+
+        <div class="text-center login-button mb-4">
+          <button id="submitButton" type="submit" class="btn btn-primary w-100">Update</button>
+          <a href="/admin/productmanagement" class="btn btn-primary w-100 mt-2">Go Back</a>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const ingredientsContainer = document.getElementById('ingredients-container');
+  const addIngredientButton = document.getElementById('add-ingredient');
+  const ingredientsError = document.getElementById('ingredientsError');
+
+  addIngredientButton.addEventListener('click', function() {
+      const newIngredientInput = document.createElement('div');
+      newIngredientInput.className = 'input-group mb-3';
+      newIngredientInput.innerHTML = `
+          <input type="text" class="form-control" name="ingredients[]" placeholder="Enter an ingredient" required>
+          <button class="btn btn-danger remove-ingredient" type="button">Remove</button>
+      `;
+      ingredientsContainer.appendChild(newIngredientInput);
+
+      // Add event listener to the new remove button
+      newIngredientInput.querySelector('.remove-ingredient').addEventListener('click', function() {
+          ingredientsContainer.removeChild(newIngredientInput);
+      });
+
+      // Clear any existing error message
+      ingredientsError.textContent = '';
+  });
+  document.querySelectorAll('.remove-ingredient').forEach(button => {
+            button.addEventListener('click', function() {
+                button.parentElement.remove();
+            });
+        });
+
+
+
+});
+
+
+</script>
+<script>
+ function removeImage(index, productId) {
+    if (confirm("Are you sure you want to remove this image?")) {
+        fetch(`/admin/deleteimageproduct/${productId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ index: index })
+        })
+        .then(response => {
+            if (response.ok) {
+                alert("Image removed successfully.");
+                location.reload(); // Reload the page to reflect the changes
+            } else {
+                return response.json().then(error => {
+                    throw new Error(error.message);
+                }); 
+            }
+        })
+        .catch(error => {
+            console.error("Error removing image:", error);
+            alert("Failed to remove image. Please try again.");
+        });
+    }
+}
+
+
+</script>
+<script src="/js/adminSide/forImageCropping.js"></script>
+<script src="/js/adminSide/Add&EditProductFormValidation/EditProductFormValidation.js"></script>
+
+</body>
+</html>

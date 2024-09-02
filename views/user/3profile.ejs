@@ -1,0 +1,532 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+  
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- DataTable HEADER-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.6/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.6/dist/sweetalert2.all.min.js"></script>
+  <style>
+    /* Your custom styles here */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 250px;
+      background-color: #0b0a0a;
+      padding-top: 25px;
+      color: white;
+    }
+
+    .sidebar a {
+      font-size: 17px;
+      color: white;
+      text-decoration: none;
+    }
+
+    .sidebar h2 {
+      color: rgb(248, 248, 249);
+      font-size:30px;
+    }
+
+    .main-content {
+      margin-left: 250px;
+      padding: 20px;
+    }
+
+    .table-responsive {
+      /* Style to prevent table overflow */
+      overflow-x: auto;
+    }
+
+    .button:hover {
+      box-shadow: 0px 0px 5px #2196F3, /* Blue box shadow color */
+                  0px 0px 30px #2196F3,
+                  0px 0px 90px #2196F3;
+    }
+
+    .button1:hover {
+      box-shadow: 0px 0px 5px #fe21a2,
+                  0px 0px 30px #fe21a2,
+                  0px 0px 90px #fe21a2;
+    }
+
+    /* ////////////////////Toggle dark mode button//////////////////////// */
+.toggle-dark-theme {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.toggle-dark-theme button {
+    width: 70px;
+    background-color: #ccc;
+    border-radius: 20px;
+    border: none;
+    position: relative;
+    padding: 4px;
+    cursor: pointer;
+}
+
+.toggle-dark-theme .icon {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background-color: #32006a;
+    position: relative;
+    transition: all 0.5s ease;
+}
+
+.toggle-dark-theme .icon::before {
+    font-family: "Font Awesome 6 Free";
+    font-weight: 400;
+    content: "\f186";
+    position: absolute;
+    color: #f5ecec;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: all 0.5s ease;
+}
+
+body.dark {
+    background-color: #252525; /* Dark mode background color */
+    color: #fff; /* Dark mode text color */
+}
+
+/* Dark mode styles for sidebar */
+body.dark .sidebar {
+    background-color: #252525;
+    color: #fff;
+    border-right: 1px solid #555; /* Dark mode sidebar border color */
+}
+
+body.dark .sidebar h2 {
+    color: #fcc288; /* Heading color in dark mode sidebar */
+}
+
+body.dark .sidebar a {
+    color: #0013f8; /* Link color in dark mode */
+}
+
+/* Dark mode table styles */
+body.dark .main-content table {
+    border-color: #555; /* Dark mode table border color */
+}
+
+body.dark .main-content th,
+body.dark .main-content td {
+    border-color: #444; /* Dark mode table cell border color */
+    color: #fff;
+}
+
+/* Dark mode styles for alternating row colors */
+body.dark .main-content tbody tr:nth-child(even) {
+    background-color: #353535; /* Dark mode alternate row color */
+    color: #fff;
+}
+
+/* Dark mode styles for table header */
+body.dark .main-content thead {
+    background-color: #303030; /* Dark mode table header background color */
+}
+
+/* Dark mode toggle button styles */
+body.dark .toggle-dark-theme .icon {
+    transform: translateX(calc(100% + 10px));
+    background-color: yellow; /* Dark mode toggle button background color */
+}
+
+body.dark .toggle-dark-theme .icon::before {
+    color: #000;
+    content: "\f185";
+}
+.sidebar .nav-link {
+  margin-bottom: 20px; /* Adjust the value as needed for spacing */
+}
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    @media screen and (max-width: 600px) {
+      th, td {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      th {
+        text-align: center;
+      }
+    }
+    </style>
+    <style>
+      body {
+        background-color: #f9f9fa
+      }
+
+      .padding {
+        padding: 3rem !important
+      }
+
+      .user-card-full {
+        overflow: hidden;
+    
+      }
+
+      .card {
+        border-radius: 5px;
+        -webkit-box-shadow: 0 1px 20px 0 rgba(69, 90, 100, 0.08);
+        box-shadow: 0 1px 20px 0 rgba(69, 90, 100, 0.08);
+        border: none;
+        margin-bottom: 30px;
+      
+      }
+
+      .m-r-0 {
+        margin-right: 0px;
+      }
+
+      .m-l-0 {
+        margin-left: 0px;
+      }
+
+      .user-card-full .user-profile {
+        border-radius: 5px 0 0 5px;
+      }
+
+      .bg-c-lite-green {
+        background: -webkit-gradient(linear, left top, right top, from(#f29263), to(#ee5a6f));
+        background: linear-gradient(to right, #ee5a6f, #f29263);
+      }
+
+      .user-profile {
+        padding: 20px 0;
+      }
+
+      .card-block {
+        padding: 1.25rem;
+      }
+
+      .m-b-25 {
+        margin-bottom: 25px;
+      }
+
+      .img-radius {
+        border-radius: 5px;
+      }
+
+
+
+      h6 {
+        font-size: 14px;
+      }
+
+      .card .card-block p {
+        line-height: 25px;
+      }
+
+      @media only screen and (min-width: 1400px) {
+        p {
+          font-size: 14px;
+        }
+      }
+
+      .card-block {
+        padding: 1.25rem;
+      }
+
+      .b-b-default {
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      .m-b-20 {
+        margin-bottom: 20px;
+      }
+
+      .p-b-5 {
+        padding-bottom: 5px !important;
+      }
+
+      .card .card-block p {
+        line-height: 25px;
+      }
+
+      .m-b-10 {
+        margin-bottom: 10px;
+      }
+
+      .text-muted {
+        color: #919aa3 !important;
+      }
+
+      .b-b-default {
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      .f-w-600 {
+        font-weight: 600;
+      }
+
+      .m-b-20 {
+        margin-bottom: 20px;
+      }
+
+      .m-t-40 {
+        margin-top: 20px;
+      }
+
+      .p-b-5 {
+        padding-bottom: 5px !important;
+      }
+
+      .m-b-10 {
+        margin-bottom: 10px;
+      }
+
+      .m-t-40 {
+        margin-top: 20px;
+      }
+
+      .user-card-full .social-link li {
+        display: inline-block;
+      }
+
+      .user-card-full .social-link li a {
+        font-size: 20px;
+        margin: 0 10px 0 0;
+        -webkit-transition: all 0.3s ease-in-out;
+        transition: all 0.3s ease-in-out;
+      }
+
+      .button-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+        /* Add margin to separate buttons from card content */
+      }
+
+      .btn-primary {
+        padding: 0.5rem 1rem;
+        background-color: #007bff;
+        border-color: #007bff;
+      }
+
+      .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+      }
+
+      .change-password-btn {
+        text-align: center;
+      }
+
+      
+      
+      .input-group {
+            position: relative;
+        }
+        sdfdfd
+        .carousel-image {
+        height: 370px;
+        object-fit: cover;
+    }
+
+        #suggestions-container {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: calc(100% - 2px);
+            /* Adjust the width to fit the input */
+            padding-left: 10px;
+            background-color: #fff;
+            border: 1px solid #ced4da;
+            border-radius: 0 0 0.25rem 0.25rem;
+            z-index: 1000;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .input-group:focus-within #suggestions-container {
+            display: block;
+        }
+
+        .suggestion-item {
+            padding: 0.5rem;
+            cursor: pointer;
+        }
+
+        .suggestion-item:hover {
+            background-color: #f8f9fa;
+        }
+    </style>
+
+</head>
+<body>
+    
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <a class="navbar-brand text-light" href="/userhome">Meal House</a>
+
+        <form class="d-flex mx-auto col-md-5">
+            <div class="input-group col-md-12">
+                <input class="form-control" type="search" placeholder="Search" aria-label="Search" id="search"
+                    oninput="searchFunction()" autocomplete="off">
+                <div id="suggestions-container" class="suggestions-container"></div>
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-search text-primary"></i></span>
+                </div>
+            </div>
+        </form>
+
+        <ul class="navbar-nav ">
+            <li class="nav-item">
+                <a class="nav-link text-light" href="/">Shop</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-light" href="/">Wishlist</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-light" href="/"><i class="fas fa-shopping-cart"></i> Cart</a>
+            </li>
+            <li class="nav-item">
+            <li class="nav-item"><a class="nav-link text-light" href="/"><i
+                        class="fas fa-user"></i> Account</a></li>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-light" href="/">Logout</a>
+            </li>
+        </ul>
+    </nav>
+
+
+        <div class="col-md-9 main-content ">
+          <h1 style="text-align: center;">User Profile</h1>  
+          <br>
+          <div class="container">
+            <%-include('userNavbar')%>
+        
+        <div class="page-content page-container" id="page-content"> 
+    <div class="padding">
+            <div class="row container d-flex justify-content-center">
+              <div class="col-xl-6 col-md-12">
+
+                <div class="card user-card-full float-right">
+
+                  <div class="row m-l-0 m-r-0">
+                    <div class="col-sm-4 bg-c-lite-green user-profile">
+                      <div class="card-block text-center text-white">
+                        <div class="m-b-25">
+                          <img src="https://img.icons8.com/bubbles/100/000000/user.png" class="img-radius"
+                            alt="User-Profile-Image">
+                        </div>
+                        <h6 class="f-w-600">
+                          <%= user.username %>
+                        </h6>
+                        <br>
+                      
+                          <!-- <p class="m-b-10 f-w-900">wallet</p>
+                          <h6 class="text-muted f-w-400">
+                          </h6> -->
+                          
+                        <i class=" mdi mdi-square-edit-outline feather icon-edit m-t-10 f-16"></i>
+                      </div>
+                    </div>
+                    <div class="col-sm-8">
+                      <div class="card-block">
+                        <h6 class="m-b-20 p-b-5 b-b-default f-w-600">Information</h6>
+                        <div class="row">
+                          <div class="col-sm-6">
+                            <p class="m-b-10 f-w-600">Email</p>
+                            <h6 class="text-muted f-w-400">
+                              <%= user.email %>
+                            </h6>
+
+                          </div>
+                        
+                        
+                          <div class="col-sm-6">
+                            <!-- <p class="m-b-10 f-w-600">Phone</p>
+
+                            <h6 class="text-muted f-w-400"> -->
+
+                            </h6>
+                          </div>
+
+                        </div>
+                      </div>
+                      <h6 class="m-b-20 m-t-40 p-b-5 b-b-default f-w-600"></h6>
+
+                      <div class="container-fluid">
+                       
+                          
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+    </div>
+      <script>
+        const hamburgerMenu = document.getElementById("hamburger-icon");
+        const link = document.querySelectorAll(".link");
+        const closeBtn = document.getElementById("close");
+
+        for (let i = 0; i < link.length; i++) {
+          link[i].addEventListener("click", function () {
+            var current = document.getElementsByClassName("active");
+            current[0].className = current[0].className.replace(" active", "");
+            this.className += " active";
+          });
+        }
+
+        hamburgerMenu.addEventListener("click", function () {
+          const sidebar = document.getElementById("sidebars");
+          sidebar.classList.toggle("toggle");
+        });
+
+        function closeNav() {
+          const sidebar = document.getElementById("sidebars");
+          sidebar.classList.toggle("toggle");
+        }
+      </script>
+      <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    </body>
+
+    </html>

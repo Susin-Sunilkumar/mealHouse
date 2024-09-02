@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Admin</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        #sidebar {
+            background-color: #fff;
+            height: 86vh;
+        }
+
+        .custom-border {
+            border: 2px solid #3883f4;
+            border-radius: 5px;
+        }
+
+        .maindiv {
+            height: 86vh;
+            overflow-y: scroll;
+        }
+
+        #sidebar a.nav-link:hover {
+            color: #3883f4 !important;
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand text-primary" href="#">Admin</a>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row mt-4 ml-2">
+            <!-- Sidebar -->
+            <nav id="sidebar" class="col-md-4 col-lg-2 d-md-block sidebar custom-border">
+                <div class="position-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item mt-4">
+                            <a class="nav-link text-dark" href="/admin/dashboard">
+                                Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item mt-4">
+                            <a class="nav-link text-dark" href="/admin/usermanagement">
+                                User Management
+                            </a>
+                        </li>
+                        <li class="nav-item mt-4">
+                            <a class="nav-link text-dark" href="/admin/productmanagement">
+                                Product Management
+                            </a>
+                        </li>
+                        <li class="nav-item mt-4">
+                            <a class="nav-link text-primary" href="/admin/categorymanagement">
+                                Category Management
+                            </a>
+                        </li>
+                        <li class="nav-item mt-4">
+                            <a class="nav-link text-dark" href="/order/ordermanagement">
+                                Order Management
+                            </a>
+                        </li>
+                        <li class="nav-item mt-4">
+                            <a class="nav-link text-dark" href="/admin/offermanagement">
+                                Offer Management
+                            </a>
+                        </li>
+                        <li class="nav-item mt-4">
+                            <a class="nav-link text-dark" href="/admin/couponmanagement">
+                                Coupon Management
+                            </a>
+                        </li>
+                        <li class="nav-item mt-4">
+                            <a class="nav-link text-dark" href="/admin/bannermanagement">
+                                Banner Management
+                            </a>
+                        </li>
+                       
+                        <li class="nav-item mt-4">
+                            <a class="nav-link text-dark" href="/admin/logout">
+                                Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="col-md-8 col-lg-10">
+                <div class="custom-border maindiv p-5">
+                    <div class="container ">
+                        <a href="/admin/addcategory" class="btn btn-primary mb-4">Add Category</a>
+                        <table class="table ">
+                            <thead>
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userTableBody">
+                                <% if(categories.length> 0) { %>
+                                    <% categories.forEach( categorie=> { %>
+                                        <tr>
+                                            <td>
+                                                <%= categorie.category %>
+                                            </td>
+                                            <td>
+                                                <a href="/admin/editcategory/<%= categorie._id %>"
+                                                    class="btn btn-primary">Edit</a>
+                                                <!-- <a href="/admin/deletecategory/<%= categorie._id %>" onclick="return confirmDelete();" class="btn btn-danger">Delete</a> -->
+                                                <!-- <button
+                                                    onclick="confirmDelete('/admin/deletecategory/<%= categorie._id %>')"
+                                                    class="btn btn-danger">Delete</button> -->
+                                                <button onclick="openConfirmDeleteModal('/admin/deletecategory/<%= categorie._id %>')" class="btn btn-danger">Delete</button>
+
+                                            </td>
+                                        </tr>
+                                        <% }); %>
+                                            <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- footer -->
+    <div class="mt-4">
+    </div>
+    
+    <!-- Modal HTML -->
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog"
+        aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Delete</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                  <span style='color: red;'>NOTE !!</span> Deleting the category deletes all the product inside it. 
+                  <p style="text-align: center;">Are you sure..?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openConfirmDeleteModal(url) {
+        $('#confirmDeleteModal').modal('show')
+        $('#confirmDeleteBtn').click(function() {
+            window.location.href = url
+        });
+    }
+    </script>
+
+    <!-- Include Bootstrap JS (jQuery and Popper.js required) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

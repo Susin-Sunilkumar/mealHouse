@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout - Your E-commerce</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+</head>
+
+<body>
+
+    <div class="container mt-4">
+        <h1 class="text-primary">Checkout</h1>
+        <hr>
+
+        <div class="row">
+            <div class="col-md-6">
+                <h4><strong>Product Details</strong></h4>
+                <% if( cart.length> 0 ) { %>
+                    <% cart.forEach( ( cartitem )=> { %>
+                        <% let offerPrice=0; %>
+                            <% const matchingOffer=offers.find(offer=> offer.cart.product === cartitem.product &&
+                                offer.offer !== null); %>
+                                <% if (matchingOffer) { %>
+                                    <% offerPrice=cartitem.price - (cartitem.price * (matchingOffer.offer.discount /
+                                        100)); %>
+                                        <p><strong>
+                                                <%= cartitem.product %> :
+                                            </strong> ₹ <%= offerPrice %> (Quantity: <%= cartitem.quantity %>)</p>
+                                        <% } else { %>
+                                            <p><strong>
+                                                    <%= cartitem.product %> :
+                                                </strong> ₹ <%= cartitem.price %> (Quantity: <%= cartitem.quantity %>)
+                                            </p>
+                                            <% } %>
+                                                <% }); %>
+                                                    <% } %>
+                                                        <% let totalPrice=0; let prices=[]; offers.forEach(offer=> {
+                                                            let price = 0;
+                                                            if (offer.offer) {
+                                                            price = (offer.cart.price - (offer.cart.price *
+                                                            (offer.offer.discount / 100))) * offer.cart.quantity;
+                                                            } else {
+                                                            price = offer.cart.price * offer.cart.quantity;
+                                                            }
+                                                            prices.push(price);
+                                                            totalPrice += price;
+                                                            });
+                                                            %>
+                                                            <p id="discount"><strong>Discount :</strong> ₹ 0 </p>
+                                                            <p id="totalData" data-total-price="<%= totalPrice %>">
+                                                                <strong>Total Amount
+                                                                    :</strong> ₹ <%= totalPrice %>
+                                                            </p>
+                                                            <p id="prices" data-prices="<%= prices.join(',') %>"></p>
+                                                            <br>
+                                                            <div class="form-group mt-4 d-flex align-items-end">
+                                                                <div class="flex-grow-1">
+                                                                    <label for="couponCode">Coupon Code</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="couponCode" placeholder="Enter coupon code">
+
+                                                                </div>
+                                                                <div class="ml-2">
+                                                                    <button class="btn btn-primary"
+                                                                        id="applyCouponBtn">Apply</button>
+                                                                    <button class="btn btn-primary"
+                                                                        id="viewCouponsBtn">Available Coupons</button>
+                                                                </div>
+                                                            </div>
+                                                            <p id="couponMessage" class="text-danger"></p>
+                                                            <p id="couponSuccessMessage" class="text-primary"></p>
+                                                            <p id="walletbalence" wallet-amount=<%=userData.wallet %>
+                                                                ><strong>Wallet Balance
+                                                                    :</strong> ₹ <%= userData.wallet %>
+                                                            </p>
+            </div>
+            <div class="col-md-6">
+                <form action="/cart/placeorder" method="POST">
+                    <input type="hidden" id="discountprice" name="discountprice" value="0">
+                    <input type="hidden" id="appliedCouponCode" name="appliedCouponCode" value="">
+                    <% if( addresses.length> 0 ) { %>
+                        <h4><strong>Select Address</strong></h4>
+                        <% } %>
+                            <% if( addresses.length> 0 ) { %>
+                                <% addresses.forEach( ( address, index )=> { %>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="address" id="address"
+                                            value="<%= address._id %>" <% if ( index===0 ) { %> checked <% } %> >
+                                            <label class="form-check-label" for="address<%= index %>">
+                                                <div>
+                                                    <%= address.address %>
+                                                </div>
+                                                <div>
+                                                    <%= address.city %>
+                                                </div>
+                                                <div>
+                                                    <%= address.state %>
+                                                </div>
+                                                <div>Pincode: <%= address.pincode %>
+                                                </div>
+                                            </label>
+                                    </div>
+                                    <br>
+                                    <% }); %>
+                                        <% } else { %>
+                                            <p>You have no saved addresses. Please go to your <a
+                                                    href="/userprofile/<%= userid %>">profile</a> and add an address to
+                                                proceed with your order.</p>
+                                            <% } %>
+
+                                                <hr>
+                                                <% if( addresses.length> 0 ) { %>
+                                                    <h4><strong>Select Payment Method</strong></h4>
+                                                    <div class="form-group">
+                                                        <label for="payment">Choose a payment method:</label>
+                                                        <select class="form-control" id="payment" name="payment">
+                                                            <option value="COD">Cash On Delivery</option>
+                                                            <option value="Razorpay">Net Banking</option>
+                                                            <option value="Wallet">Wallet</option>
+                                                            <!-- Add more options as needed -->
+                                                        </select>
+                                                    </div>
+
+                                                    <!-- Button to place order -->
+                                                    <button type="submit" class="btn btn-primary btn-block"
+                                                        id="orderButton">Place Order</button>
+                                                    <button type="button" class="btn btn-primary btn-block"
+                                                        id="payNowButton">Pay Now</button>
+                                                    <% } %>
+                                                        <p id="insufficientBalenceMessage" class="text-danger"></p>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal" id="couponModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Available Coupons</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <ul id="availableCouponsList">
+                            <% coupons.forEach(coupon=> { %>
+                                <li>
+                                    Code: <%= coupon.code %>,
+                                        Discount: ₹ <%= coupon.discount %>,
+                                            Expiry: <%= new Date(coupon.expiryDate).toLocaleDateString() %>
+                                </li>
+                                <% }); %>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const wallet = document.getElementById('walletbalence');
+                const walletamount = wallet.getAttribute('wallet-amount');
+                const total = document.getElementById('totalData');
+                const totalamount = total.getAttribute('data-total-price');
+                const paymentSelect = document.getElementById('payment');
+                const orderButton = document.getElementById('orderButton');
+                const payNowButton = document.getElementById('payNowButton');
+                const insufficientBalenceMessage = document.getElementById('insufficientBalenceMessage');
+                const form = document.querySelector('form'); // Select the form
+
+                function toggleButtons(selectedPayment) {
+                    if (selectedPayment === 'COD') {
+                        insufficientBalenceMessage.innerHTML = ''
+                        orderButton.style.display = 'block';
+                        payNowButton.style.display = 'none';
+                    } else if (selectedPayment === 'Wallet') {
+                        if (parseInt(walletamount) >= parseInt(totalamount)) {
+                            orderButton.style.display = 'block';
+                            payNowButton.style.display = 'none';
+                        } else {
+                            orderButton.style.display = 'none';
+                            payNowButton.style.display = 'none';
+                            insufficientBalenceMessage.innerHTML = `Insufficient Balance`
+                        }
+                    } else {
+                        insufficientBalenceMessage.innerHTML = ''
+                        orderButton.style.display = 'none';
+                        payNowButton.style.display = 'block';
+                    }
+                }
+
+                paymentSelect.addEventListener('change', function () {
+                    const selectedPayment = paymentSelect.value;
+                    toggleButtons(selectedPayment);
+                });
+                const defaultPayment = paymentSelect.value;
+                toggleButtons(defaultPayment);
+
+                const viewCouponsBtn = document.getElementById('viewCouponsBtn');
+                const couponModal = document.getElementById('couponModal');
+
+                viewCouponsBtn.addEventListener('click', function () {
+                    $(couponModal).modal('show');
+                });
+            });
+        </script>
+
+
+        <script>
+            let couponDiscount = 0
+            let couponCodeForNetbannking = ''
+            // Wait for the document to be fully loaded
+            document.addEventListener('DOMContentLoaded', function () {
+
+                let orderId;
+                let orderprice;
+                let ordresignature;
+                let totalPrice = document.getElementById('totalData').getAttribute('data-total-price');
+
+                // Function to create a Razorpay order
+                function createRazorpayOrder(total) {
+                    // Configuration for AJAX request to create a Razorpay order
+                    var settings = {
+                        "url": "/payment/createrazorpayorder",
+                        "method": "POST",
+                        "timeout": 0,
+                        "headers": {
+                            "Content-Type": "application/json"
+                        },
+                        "data": JSON.stringify({
+                            "amount": totoal * 100 // Amount for the order (in INR) 
+                        }),
+                    };
+
+                    // AJAX request to create the order
+                    $.ajax(settings).done(function (response) {
+                        // Handle the response from the server
+                        orderId = response.orderId;
+                        orderprice = response.orderprice;
+                        ordresignature = response.signature;
+                        // Show the 'Pay Now' button once the order is created
+                        $("#payNowButton").show();
+                    });
+                }
+
+                // Function to handle the payment process
+                function handlePayment(response) {
+                    // Create form dynamically for submitting payment details
+                    var form = document.createElement('form');
+                    form.method = 'post';
+                    form.action = '/cart/placeorder'; // Replace with the URL to redirect after payment
+
+                    // Create an input element to hold the payment ID
+                    var paymentIdInput = document.createElement('input');
+                    paymentIdInput.type = 'hidden';
+                    paymentIdInput.name = 'appliedCouponCode';
+                    paymentIdInput.value = couponCodeForNetbannking;
+
+                    // Add the input element to the form
+                    form.appendChild(paymentIdInput);
+
+                    // Add hidden input fields for payment mode and address details (if applicable)
+                    var paymentModeInput = document.createElement('input');
+                    paymentModeInput.type = 'hidden';
+                    paymentModeInput.name = 'payment';
+                    paymentModeInput.value = document.getElementById('payment').value; // Assumes the payment mode is selected through a dropdown
+
+                    form.appendChild(paymentModeInput);
+
+
+                    var discountInput = document.createElement('input');
+                    discountInput.type = 'hidden';
+                    discountInput.name = 'discountprice';
+                    discountInput.value = couponDiscount;
+
+                    form.appendChild(discountInput);
+
+                    var addressInput = document.createElement('input');
+                    addressInput.type = 'hidden';
+                    addressInput.name = 'address';
+                    addressInput.value = document.getElementById('address').value;
+
+                    form.appendChild(addressInput);
+
+                    // Append the form to the body
+                    document.body.appendChild(form);
+
+                    // Submit the form
+                    form.submit();
+                }
+
+                // Event listener for the 'Pay Now' button click
+                document.getElementById('payNowButton').addEventListener('click', function (e) {
+                    const total = document.getElementById('totalData').getAttribute('data-total-price')
+                    var options = {
+                        "key": "rzp_test_1PFNwpWKmfUHha",
+                        "amount": total * 100, // Amount in smallest currency unit (e.g., paise for INR)
+                        "currency": "INR",
+                        "name": "E-CART",
+                        "description": "Online Payment",
+                        "order_id": orderId, // Use the previously obtained order ID
+                        "handler": handlePayment // Function to handle payment response
+                    };
+
+                    var rzp1 = new Razorpay(options);
+
+                    rzp1.on('payment.failed', function (response) {
+                        // Handle payment failure
+                        alert(response.error.code);
+                        alert(response.error.description);
+                        alert(response.error.source);
+                        alert(response.error.step);
+                        alert(response.error.reason);
+                        alert(response.error.metadata.order_id);
+                        alert(response.error.metadata.payment_id);
+                    });
+
+                    rzp1.open();
+                    e.preventDefault(); // Prevent default form submission behavior
+                });
+
+                // Call the function to create the Razorpay order when the DOM is loaded
+                createRazorpayOrder(totalPrice);
+            });
+
+
+            //coupon working
+            document.addEventListener('DOMContentLoaded', function () {
+                document.getElementById('discountprice').value = 0;
+                let totalPrice = document.getElementById('totalData').getAttribute('data-total-price');
+                let prices = document.getElementById('prices').getAttribute('data-prices');
+                const applyCouponBtn = document.getElementById('applyCouponBtn');
+                const couponCodeInput = document.getElementById('couponCode');
+                let isCouponApplied = false;
+
+                applyCouponBtn.addEventListener('click', function () {
+
+                    const couponCode = couponCodeInput.value.trim();
+
+                    // Fetch API request to apply coupon
+                    if (!isCouponApplied) {
+                        console.log('applying')
+                        fetch('/cart/applycoupon', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ couponCode: couponCode, totalPrice: totalPrice, prices }),
+                        })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Network response was not ok');
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+
+                                const discountValue = parseFloat(data.discount) || 0;
+                                couponDiscount = discountValue
+                                couponCodeForNetbannking = data.code
+                                const isValid = data.isValid || false;
+                                const isExpired = data.isExpired || false;
+                                const isLimit = data.isLimit
+                                const isUsed = data.isUsed
+                                document.getElementById('discount').innerHTML = `<strong>Discount :</strong> ₹ ${discountValue}`;
+                                document.getElementById('totalData').setAttribute('data-total-price', totalPrice - discountValue);
+                                document.getElementById('totalData').innerHTML = `<strong>Total Amount :</strong> ₹ ${totalPrice - discountValue}`;
+                                document.getElementById('discountprice').value = discountValue;
+                                document.getElementById('appliedCouponCode').value = couponCode;
+
+                                if (isValid && !isExpired && !isUsed) {
+                                    isCouponApplied = true;
+                                    applyCouponBtn.textContent = 'Remove';
+                                    if (isLimit) {
+                                        couponMessage.textContent = '';
+                                        couponSuccessMessage.textContent = `Coupon applied! Discount: ₹ ${discountValue}`;
+                                    } else {
+                                        couponSuccessMessage.textContent = '';
+                                        couponMessage.textContent = 'This product cannot use this coupon because the price is lower than the coupon limit.';
+                                    }
+                                }
+                                if (isValid && isExpired) {
+                                    couponSuccessMessage.textContent = '';
+                                    couponMessage.textContent = 'Coupon has expired.';
+                                }
+                                if (isValid && isUsed) {
+                                    couponSuccessMessage.textContent = '';
+                                    couponMessage.textContent = 'You have already used this coupon.';
+                                }
+                                if (!isValid) {
+                                    couponSuccessMessage.textContent = '';
+                                    couponMessage.textContent = 'Invalid coupon code. Please enter a valid code.';
+                                }
+
+
+                            })
+                            .catch(error => {
+                                // Handle fetch errors
+                                console.error('Error applying coupon:', error);
+                            });
+                    } else {
+                        isCouponApplied = false;
+                        console.log('removed')
+                        document.getElementById('discount').innerHTML = `<strong>Discount :</strong> ₹ 0`;
+                        document.getElementById('totalData').setAttribute('data-total-price', totalPrice);
+                        document.getElementById('totalData').innerHTML = `<strong>Total Amount :</strong> ₹ ${totalPrice}`;
+                        document.getElementById('discountprice').value = 0;
+                        document.getElementById('couponCode').value = '';
+
+                        applyCouponBtn.textContent = 'Apply';
+                        couponSuccessMessage.textContent = '';
+                        couponMessage.textContent = '';
+                    }
+                });
+            });
+
+
+        </script>
+        <!-- Include Bootstrap JS -->
+
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

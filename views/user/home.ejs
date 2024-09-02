@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>MealHouse</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+  <style>
+    .input-group {
+      position: relative;
+    }
+
+    .carousel-image {
+      height: 370px;
+      object-fit: cover;
+    }
+
+    #suggestions-container {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: calc(100% - 2px);
+      /* Adjust the width to fit the input */
+      padding-left: 10px;
+      background-color: #fff;
+      border: 1px solid #ced4da;
+      border-radius: 0 0 0.25rem 0.25rem;
+      z-index: 1000;
+      max-height: 200px;
+      overflow-y: auto;
+      display: none;
+    }
+
+    .input-group:focus-within #suggestions-container {
+      display: block;
+    }
+
+    .suggestion-item {
+      padding: 0.5rem;
+      cursor: pointer;
+    }
+
+    .suggestion-item:hover {
+      background-color: #f8f9fa;
+
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      background: linear-gradient(to right, #F56318, #690102);
+      font-color:white   }
+
+    .card-main-div {
+      background-color: #41070796;
+      border-radius: 1.3rem;
+      box-shadow: 0 4px 4px rgba(0, 0, 0, 0.178);
+      width: 100%;
+      max-width: 18rem;
+      display: grid;
+      padding: 20px;
+      margin: 0.5rem auto;
+
+      /* Center the card */
+    }
+
+    .name-of-product {
+      display: flex;
+      justify-content: space-evenly;
+      font-weight: 700;
+      font-size: 1.3rem;
+      color: #ffffff;
+    }
+
+    .div-holding-the-ingredients {
+      display: flex;
+      width: 100%;
+      gap: 1.4rem;
+      margin-bottom: 0.2rem;
+      overflow-x: auto;
+      padding-bottom: 10px;
+    }
+
+    .ingredients {
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      padding: 0.3rem 0.5rem;
+      border-radius: 6.3rem;
+      box-shadow: 0.1rem 0.1rem 0.1rem 0rem #000000;
+      background-color: red;
+      flex: 0 0 auto;
+      background-color:  #c5b100;
+      color: black;
+    }
+
+    .img-of-ingredients {
+      width: 0.8rem;
+      height: 0.8rem;
+    }
+
+    .name-of-ingredients {
+      font-weight: 500;
+      font-size: 0.8rem;
+     
+    }
+
+
+    .div-for-description-heading {
+      margin-top: 0.5rem;
+      color: white;
+      font-weight: 600;
+
+    }
+
+    .description {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding-left: 1rem;
+
+      margin-bottom: 1.2rem;
+      font-size: 0.9rem;
+      color: #ffffff;
+      position: relative;
+
+    }
+
+
+
+    .div-for-price-and-add-to-cart-and-view {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap-reverse;
+      gap: 1rem;
+    }
+
+    .price {
+      font-weight: 700;
+      font-size: 1.8rem;
+      color: #382925;
+    }
+
+    .div-for-add-to-cart {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      box-shadow: 0.1rem 0.1rem 0.1rem 0rem #000000;
+      background: #ff5e00;
+      border-radius: 0.6rem;
+      padding: 0.9rem 1.1rem;
+      color: white;
+    }
+
+    .img-for-add-to-cart .icon-for-add-to-cart {
+      width: 0.8rem;
+      height: 0.9rem;
+    }
+
+    .add-to-cart-word {
+      font-weight: 600;
+      font-size: 1rem;
+      color: #3e312d;
+    }
+    .add-to-cart-word:hover {
+      color: rgba(0, 0, 0, 0.39);
+
+    }
+
+    .div-for-view-product {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      box-shadow: 0.1rem 0.1rem 0.1rem 0rem #000000;
+      background: #ff5e00;
+      border-radius: 0.6rem;
+      padding: 0.9rem 1.1rem;
+      color: white;
+    }
+
+    .div-for-view-product:hover {
+      background: #ff5e0049;
+      color: #00000031;
+      cursor: pointer;
+      border-radius: 5rem;
+    }
+
+    .img-of-product {
+      width: 100%;
+      height: 100%;
+
+
+      border-radius: 1.3rem;
+
+    }
+
+    .div-for-image {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: red;
+    }
+
+    .div-for-add-to-cart:hover {
+      background: #ff5e007a;
+      color: #ffffff4b;
+      cursor: pointer;
+      border-radius: 5rem;
+    }
+
+    .swiper-slide {
+      text-align: center;
+      font-size: 18px;
+
+      width: auto;
+    }
+
+    .swiper-slide:hover {
+      cursor: default;
+    }
+
+    .heading-div-for-ingredients {
+      font-weight: 600;
+      margin-bottom: 0.1rem;
+      margin-top: 1rem;
+      color: white;
+    }
+
+    .div-holding-the-ingredients::-webkit-scrollbar {
+      display: none;
+    }
+
+    .div-holding-the-ingredients {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    @media (min-width: 1024px) {
+      .name-of-product {
+        font-size: 1.5rem;
+        color: rgb(247, 241, 241);
+      }
+
+    }
+
+    @media (min-width: 768px) {
+
+      .name-of-product {
+        font-size: 1.5rem;
+        color: rgb(250, 242, 242);
+
+      }
+
+      .div-for-add-to-cart {
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .div-for-view-product {
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+      }
+
+
+      .price {
+        font-size: 2rem;
+        color: white;
+      }
+
+      .add-to-cart-word {
+        font-size: 1.2rem;
+        color: white;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .name-of-product {
+        font-size: 1.5rem;
+        color: #f1e9e9;
+
+      }
+
+      .div-for-add-to-cart {
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .div-for-view-product {
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+        
+      }
+
+
+      .price {
+        font-size: 1.5rem;
+      }
+
+      .add-to-cart-word {
+        font-size: 0.9rem;
+      }
+
+      .div-for-add-to-cart {
+        padding: 0.7rem 0.9rem;
+      }
+    }
+   
+  </style>
+  <link rel="stylesheet" href="/styles/user/slider.css">
+
+  </head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <a class="navbar-brand text-light" href="/userhome">Mealhouse</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <form class="form-inline mx-auto">
+        <div class="input-group">
+          <input class="form-control" type="search" placeholder="Search" aria-label="Search" id="search" oninput="searchFunction()" autocomplete="off">
+          <div id="suggestions-container" class="suggestions-container"></div>
+          <div class="input-group-append">
+            <span class="input-group-text"><i class="fas fa-search text-primary"></i></span>
+          </div>
+        </div>
+      </form>
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link text-light" href="/shop">Shop</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-light" href="/wishlist">Wishlist</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-light" href="/cart"><i class="fas fa-shopping-cart"></i> Cart</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-light" href="/userprofile/<%= userId %>"><i class="fas fa-user"></i> Account</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-light" href="/logout">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+
+
+  <div class="customdiv">
+    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" style="border-radius: 15px;">
+      <ol class="carousel-indicators">
+        <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+        <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+        <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+      </ol>
+      <div class="carousel-inner">
+        <% if(banners.length> 0) { %>
+          <% banners.forEach((banner, index)=> { %>
+            <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+              <img class="d-block w-100 carousel-image" src="<%= banner.image %>" alt="Slide <%= index + 1 %>">
+            </div>
+            <% }); %>
+              <% } %>
+      </div>
+      <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+      </a>
+      <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+      </a>
+    </div>
+  </div>
+
+  <h2 class="text-center" id="heading" style="color: white;">Trending Foods</h2>
+  <br>
+ 
+
+
+  <div class="container productsdiv" id="carddiv">
+    <div class="outer-div">
+
+      <div class="swiper for-filter">
+    
+        <div class="swiper-wrapper wrap-filter">
+  
+          
+         
+          <div class="swiper-slide slider">
+            <a href="/">Filter</a>
+            <i class="fa-solid fa-filter" style="color: white;"></i>
+          </div>
+  
+          <div class="swiper-slide  slider">
+            <a href="/">Sort By</a>
+          </div>
+  
+          <div class="swiper-slide  slider">
+            <a href="/">Fast Delivery</a>
+          </div>
+  
+          <div class="swiper-slide  slider">
+            <a href="/">New on Mealhouse</a>
+          </div>
+          <div class="swiper-slide  slider">
+            <a href="/">Ratings 4.0+</a>
+          </div>
+  
+          <div class="swiper-slide  slider">
+            <a href="/">Pure Veg</a>
+          </div>
+          <div class="swiper-slide  slider">
+            <a href="/">Offers</a>
+          </div>
+  
+          <div class="swiper-slide  slider">
+            <a href="/">Rs.300 - Rs.600</a>
+          </div>
+          <div class="swiper-slide  slider">
+            <a href="/">Less Rs.300</a>
+          </div>
+  
+          
+  
+  
+  
+        </div>
+  
+  
+      </div>
+  
+    </div>
+    <div class="row d-flex justify-content-around productscontainer" id="productscontainer">
+
+      <% if(products.length> 0) { %>
+        <% products.forEach(product=> { %>
+          <div class="card-main-div">
+            <div class="div-for-image">
+              <img class="img-of-product" src="<%= product.image[0] %>" alt="nos image">
+            </div>
+
+            <div class="name-of-product">
+              <%=product.productname%>
+            </div>
+            <div class="heading-div-for-ingredients">Ingredients</div>
+            <div class="div-holding-the-ingredients swiper-container">
+              <div class="swiper-wrapper">
+
+                <% if (product.ingredients && product.ingredients.length> 0) { %>
+                  <% product.ingredients.forEach(ingredient=> { %>
+
+                    <div class="ingredients swiper-slide">
+
+                      <div class="name-of-ingredients">
+                        <%=ingredient%>
+                      </div>
+                    </div>
+
+
+
+                    <% }); %>
+                      <% } else { %>
+                        <div class="ingredients swiper-slide">
+
+                          <div class="name-of-ingredients">
+                            No ingredients listed
+                          </div>
+                        </div>
+                        <% } %>
+
+
+              </div>
+
+
+            </div>
+
+            <div class="div-for-description-heading">Description</div>
+            <span class="description">
+              <%=product.description%>
+
+            </span>
+
+
+            <div class="div-for-price-and-add-to-cart-and-view">
+              <div class="price"> ₹<%= product.price %>
+                <button style="margin-left: 6rem;"  class="btn btn-link wishlist-btn" onclick="toggleWishlist('<%= product._id %>')">
+                  <% if(wishlistProducts.some(wishlistProduct=> wishlistProduct._id.equals(product._id))) { %>
+                    <i class="fa-solid fa-heart" id="fa-heart<%= product._id %>"></i>
+                    <% } else { %>
+                      <i class="fa-regular fa-heart" id="fa-heart<%= product._id %>"></i>
+                      <% } %>
+                </button>
+              </div>
+              <div class="div-for-add-to-cart">
+                <div class="img-for-add-to-cart">
+                  <i class="fas fa-shopping-cart icon-for-add-to-cart"></i>
+                </div>
+                <a style="text-decoration: none;" href="/cart/addtocart/<%= product._id %>">    <span class="add-to-cart-word"> Add to cart</span></a>
+            
+
+              </div>
+
+
+
+
+
+
+
+             
+             
+             
+              <div class="div-for-view-product">
+                
+                <div class="view-product">
+                  <i class="fas fa-eye"></i>
+                </div>
+                <a style="text-decoration: none;" href="/product/<%= product._id %>"> <span class="add-to-cart-word">
+                  View Product
+                </span> </a>
+               
+              </div>
+
+
+
+
+
+
+
+            </div>
+
+
+
+
+          </div>
+          <% }); %>
+            <% } %>
+    </div>
+  </div>
+
+
+  <footer class="bg-dark text-light pt-4">
+    <div class="container">
+      <div class="row">
+        <!-- Help Section -->
+        <div class="col-md-4 col-lg-3">
+          <h5>HELP</h5>
+          <ul class="list-unstyled">
+            <li><a href="#" class="text-light">Payments</a></li>
+            <li><a href="#" class="text-light">Shipping</a></li>
+            <li><a href="#" class="text-light">FAQ</a></li>
+            <li><a href="#" class="text-light">Cancellation & Returns</a></li>
+            <li><a href="#" class="text-light">Contact Us</a></li>
+          </ul>
+        </div>
+
+        <!-- About Section -->
+        <div class="col-md-4 col-lg-3">
+          <h5>ABOUT</h5>
+          <ul class="list-unstyled">
+            <li><a href="#" class="text-light">About Us</a></li>
+          </ul>
+        </div>
+
+        <!-- Social Section -->
+        <div class="col-md-4 col-lg-3">
+          <h5>SOCIAL</h5>
+          <ul class="list-unstyled">
+            <li><a href="#" class="text-light">Facebook</a></li>
+            <li><a href="#" class="text-light">Instagram</a></li>
+            <li><a href="#" class="text-light">Youtube</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Bottom Section -->
+      <div class="text-center text-light py-3">
+        <p>&copy; 2024 MealHouse. All Rights Reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Optional: Add Bootstrap's CSS CDN if not included elsewhere -->
+  <script src="/js/user/slider.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var swiper = new Swiper('.swiper-container', {
+        slidesPerView: 'auto',
+        spaceBetween: 4,
+
+      });
+    });
+  </script>
+
+  <script>
+
+    function toggleWishlist(productid) {
+      const icon = document.getElementById(`fa-heart${productid}`);
+      if (icon && icon.classList.contains('fa-regular')) {
+        fetch(`/wishlist/addtowishlist/${productid}`)
+          .then(() => {
+            icon.classList.remove('fa-regular');
+            icon.classList.add('fa-solid');
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+
+        // icon.style.color = '#ff291a';
+        // Logic to handle adding the product to the wishlist...
+      } else if (icon) {
+        fetch(`/wishlist/removefromwishlist/${productid}`)
+          .then(() => {
+            icon.classList.remove('fa-solid');
+            icon.classList.add('fa-regular');
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+
+        // Logic to handle removing the product from the wishlist...
+      }
+    }
+
+
+    function handleClickOutside(event) {
+      const suggestionsContainer = document.getElementById('suggestions-container');
+      const searchInput = document.getElementById('search');
+
+      if (event.target !== searchInput && !searchInput.contains(event.target)) {
+        suggestionsContainer.style.display = 'none'; // Hide the suggestions when clicking outside
+      }
+    }
+
+    function searchFunction() {
+      const searchInput = document.getElementById('search').value;
+      // Make an AJAX request to your server with the search query
+      fetch(`/search?search=${searchInput}`)
+        .then(response => response.json())
+        .then(data => {
+          // Update the suggestions box with the received data
+          const suggestionsContainer = document.getElementById('suggestions-container');
+          suggestionsContainer.innerHTML = ''; // Clear previous suggestions
+
+          if (data.products.length > 0 || data.categories.length > 0) {
+            data.products.forEach(product => {
+              const suggestionDiv = document.createElement('div');
+              suggestionDiv.classList.add('suggestion-item', 'larger-size');
+              suggestionDiv.textContent = product.productname;
+              suggestionDiv.addEventListener('click', () => {
+                window.location.href = `/product/${product._id}`;
+              });
+              suggestionsContainer.appendChild(suggestionDiv);
+            });
+
+            data.categories.forEach(category => {
+              const suggestionDiv = document.createElement('div');
+              suggestionDiv.classList.add('suggestion-item', 'larger-size');
+              suggestionDiv.textContent = category.category;
+              suggestionDiv.addEventListener('click', () => {
+                window.location.href = `/shop/${category.category}`;
+              });
+              suggestionsContainer.appendChild(suggestionDiv);
+            })
+            suggestionsContainer.style.display = 'block';
+          } else {
+            const noSuggestionDiv = document.createElement('div');
+            noSuggestionDiv.classList.add('suggestion-item', 'larger-size');
+            noSuggestionDiv.textContent = 'No products found.';
+            suggestionsContainer.appendChild(noSuggestionDiv);
+            suggestionsContainer.style.display = 'block';
+          }
+          document.addEventListener('click', handleClickOutside);
+        })
+      
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    }
+  </script>
+
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

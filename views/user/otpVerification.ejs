@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification</title>
+    <link rel="stylesheet" href="/styles/user/otpVerification.css">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(to bottom, #ff9a9e, #fad0c4);
+            color: #2b3a42;
+        }
+
+        form {
+            max-width: 500px;
+            margin-top: 5rem;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(to bottom, #ffecd2, #fcb69f);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .error-message {
+            color: red;
+        }
+
+        #timer {
+            text-align: center;
+            margin-top: 20px;
+        }
+        #resend-button {
+  background-color: #4CAF50; /* Green background */
+  color: white; /* White text color */
+  border: none; /* No border */
+  padding: 10px 20px; /* Padding */
+  text-decoration: none; /* No underline */
+ 
+  font-size: 16px; /* Font size */
+  cursor: pointer; /* Cursor style */
+  border-radius: 4px; /* Rounded corners */
+}
+
+#resend-button:hover {
+  background-color: #45a049; /* Darker green on hover */
+}
+    </style>
+</head>
+<body>
+    <form id="otpForm" action="/otpVerification" method="post">
+        <div class="title" id='mainDiv'>
+            <h1>OTP VERIFICATION</h1>
+            <p style="color: black;" class="info">
+                <h3>An OTP has been sent to</h3>
+                <span style="color: green;"><%=email%></span>
+            </p>
+            <div style="display: flex; align-items: center; justify-content: center;">
+                <p class="msg">Please enter OTP to verify</p>
+            </div>
+        </div>
+        <div class="otp-input-fields" style="background-color: rgba(0, 0, 255, 0);">
+            <input type="number" name="otp1" class="otp__digit otp__field__1" maxlength="1" oninput="moveToNext(this, 2)" required>
+            <input type="number" name="otp2" class="otp__digit otp__field__2" maxlength="1" oninput="moveToNext(this, 3)" required>
+            <input type="number" name="otp3" class="otp__digit otp__field__3" maxlength="1" oninput="moveToNext(this, 4)" required>
+            <input type="number" name="otp4" class="otp__digit otp__field__4" maxlength="1" oninput="moveToNext(this, 5)" required>
+            <input type="number" name="otp5" class="otp__digit otp__field__5" maxlength="1" oninput="moveToNext(this, 6)" required>
+            <input type="number" name="otp6" id="otp6" class="otp__digit otp__field__6" maxlength="1" oninput="moveToNext(this, null)" required>
+        </div>
+        <div id="errorMessage" style="display: flex; justify-content: center;">
+            <% if (message) { %>
+                <p class="error-message"><%= message %></p>
+            <% } %>
+        </div>
+        <div style="display: flex; justify-content: center;">
+            <button id="resend-button" class="hidden">Resend OTP</button>
+            
+        </div>
+       
+    </form>
+
+    
+
+    <script>
+        function moveToNext(input, nextIndex) {
+            const maxLength = parseInt(input.getAttribute('maxlength'));
+
+            if (input.value.length >= maxLength && nextIndex !== null) {
+                const nextInput = document.querySelector(`.otp__field__${nextIndex}`);
+                if (nextInput) {
+                    nextInput.focus();
+                }
+            }
+            input.addEventListener('keydown', function(event) {
+                if (event.key === 'Backspace' && input.value.length === 0) {
+                    const previousInput = document.querySelector(`.otp__field__${nextIndex - 2}`);
+                    if (previousInput) {
+                        previousInput.focus();
+                        previousInput.value = '';
+                    }
+                }
+            });
+
+            const otpInputs = document.querySelectorAll('.otp__digit');
+            const filledFields = Array.from(otpInputs).every(input => input.value.length === maxLength);
+
+            if (filledFields) {
+                submitOTP();
+            }
+        }
+
+        async function submitOTP() {
+            const otpInputs = document.querySelectorAll('.otp__digit');
+            const otp = Array.from(otpInputs).map(input => input.value).join('');
+            const response = await fetch('/otpVerification', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ otp }),
+            });
+
+            const result = await response.json();
+            const errorMessageElement = document.getElementById('errorMessage');
+            errorMessageElement.innerHTML = '';
+
+            if (result.success) {
+                // OTP verification successful, you can redirect or perform other actions here
+                window.location.href = result.redirectUrl;
+            } else {
+                const errorMsg = document.createElement('p');
+                errorMsg.className = 'error-message';
+                errorMsg.textContent = result.message;
+                errorMessageElement.appendChild(errorMsg);
+            }
+        }
+
+        function startTimer(duration, display) {
+            let timer = duration, minutes, seconds;
+            const intervalId = setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                display.textContent = minutes + ":" + seconds;
+
+                if (--timer < 0) {
+                    clearInterval(intervalId);
+                    document.getElementById('resend-button').classList.remove('hidden');
+
+                    document.querySelector('.otp-input-fields').classList.add('hidden');                   
+                    document.getElementById('timer').classList.add('hidden')
+                    document.getElementById('mainDiv').classList.add('hidden')
+                }
+            }, 1000);
+        }
+
+        window.onload = function () {
+            const twoMinutes = 180; // Timer duration in seconds (2 minutes)
+
+            const display = document.createElement('div');
+            display.setAttribute('id', 'timer');
+            document.querySelector('.title').appendChild(display);
+            startTimer(twoMinutes, display);
+        };
+
+
+        document.getElementById('resend-button').addEventListener('click',function(){
+            location.reload()
+        })
+    </script>
+</body>
+</html>
