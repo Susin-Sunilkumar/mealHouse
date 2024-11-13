@@ -1,0 +1,19 @@
+.custom-swal-popup {
+    border-radius: 2rem; /* Rounded corners */
+    border: solid 0.2rem #ffffff;
+    
+  }
+  
+  .custom-swal-title {
+    font-family: 'Arial', sans-serif;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: white;
+  }
+  .custom-swal-text {
+    color: #f56318 !important; /* Ensures white color is applied */
+  }
+  
+  
+ 
+  

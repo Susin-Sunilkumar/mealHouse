@@ -21,8 +21,7 @@ module.exports = {
     if (req.session.userId) {
       res.redirect("/userHome");
     } else {
-      const message = req.flash("error");
-      res.render("user/login", { message });
+      res.render("user/login");
     }
   },
 
@@ -44,37 +43,30 @@ module.exports = {
 
   postLogin: async (req, res) => {
     const { email, password } = req.body;
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const passwordPattern = /^.{1,}$/;
-
-    // Check if email and password meet the required patterns
-    if (!emailPattern.test(email) || !passwordPattern.test(password)) {
-      return res.render("user/login", {
-        message: "Email and password should be valid!",
-      });
-    }
+    console.log("reached post login");
 
     try {
       const user = await User.findOne({ email: email });
 
+      
+
       if (!user) {
-        return res.render("user/login", {
-          message: "Email not found. Please sign up!",
-        });
+        return res.json({ success: false, message: "User not found..! Please Register..!" });
       }
       const passwordMatch = await bcrypt.compare(password, user.password);
 
-      // Checking password match
+      
       if (passwordMatch) {
         if (!user.isBlocked) {
-          // Adding session details
           req.session.userId = user._id;
           req.session.userName = user.username;
 
-          return res.redirect("/userhome");
+          return res.json({ success: true });
         } else {
-          return res.render("user/login", {
-            message: "This account is blocked!",
+          console.log('this user is blocked ',user.email)
+          return res.json({
+            success: false,
+            message: "User is blocked..! Contact Admin",
           });
         }
       } else {
@@ -145,49 +137,25 @@ module.exports = {
   },
 
   postRegistration: async (req, res) => {
-
     const username = req.body.username.trim();
     const email = req.body.email.trim();
     const referedcode = req.body.referedcode.trim();
     const password = req.body.password.trim();
-    console.log("this is the referedcode from the other user: ", referedcode);
 
     req.session.data = req.body;
 
     if (req.body.referedcode != "") {
       req.session.referedcode = req.body.referedcode;
-      console.log(req.session.referedcode, "saving in the session");
     }
 
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const data = await User.findOne({ email: email });
 
-    if (
-      username === null ||
-      username.trim() === "" ||
-      password === null ||
-      password.trim() === ""
-    ) {
-      res.render("user/signup", {
-        message: "Enter valid username and password!",
-      });
+    if (data == null) {
+      res.json({ redirect: true });
     } else {
-      if (!emailPattern.test(email)) {
-        res.render("user/signup", { message: "Email not valid!" });
-      } else {
-        if (data == null) {
-          //OTP generator
-
-          res.redirect("/otpVerification");
-          console.log("going to post registration");
-        } else {
-          req.flash(
-            "error",
-            `Email already exists. Please login with the email account: ${email}`
-          );
-          res.redirect("/");
-        }
-      }
+      return res.status(409).json({
+        message: "LOGIN.... User already exists",
+      });
     }
   },
 
@@ -219,11 +187,24 @@ module.exports = {
         const mailOptions = {
           from: process.env.EMAIL_USER,
           to: email,
-          subject: "One-Time Password (OTP) for Authentication for MealHouse",
+          subject: "Your One-Time Password (OTP) for MealHouse Authentication",
           html: `
-            <p>Your opt for <h3 style="color: orange;">MealHouse Login</h3> </p>
-            <h1 style="color: red;">${otp}</h1>
-          `, // Use html instead of text
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
+              <header style="text-align: center; padding-bottom: 20px; border-bottom: 1px solid #ddd;">
+                <h2 style="color: #f56318; margin: 0;">MealHouse Authentication</h2>
+              </header>
+              <main style="padding: 20px; text-align: center;">
+                <p style="font-size: 1.2em; color: #333;">Your OTP for accessing <strong>MealHouse</strong> is:</p>
+                <h1 style="color: #e63946; font-size: 3em; margin: 10px 0;">${otp}</h1>
+                <p style="font-size: 1em; color: #666;">This OTP is valid for a limited time only. Please use it promptly.</p>
+                <p style="font-size: 0.9em; color: #888;">If you didn’t request this OTP, please ignore this email or contact support.</p>
+              </main>
+              <footer style="margin-top: 20px; padding-top: 10px; text-align: center; border-top: 1px solid #ddd; font-size: 0.8em; color: #888;">
+                <p>Thank you for choosing MealHouse!</p>
+                <p>&copy; ${new Date().getFullYear()} MealHouse. All rights reserved.</p>
+              </footer>
+            </div>
+          `,
         };
 
         transporter.sendMail(mailOptions, async (error, info) => {
@@ -268,8 +249,6 @@ module.exports = {
     if (otp === sessionOtp) {
       const userData = req.session.data;
 
-     
-
       const referedcode = req.session.referedcode;
 
       console.log("Post Otp Verifaication the referred code", referedcode);
@@ -277,7 +256,7 @@ module.exports = {
       if (referedcode != "") {
         const isReferalValid = await User.findOne({ referalcode: referedcode });
 
-        console.log('checking the isreferalValid or not',isReferalValid)
+        console.log("checking the isreferalValid or not", isReferalValid);
 
         if (isReferalValid != null) {
           console.log("referalcode valid");

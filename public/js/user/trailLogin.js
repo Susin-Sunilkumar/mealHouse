@@ -18,9 +18,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
     .querySelector(".forgot a")
 
     .addEventListener("click", function (event) {
-      console.log(
-        "Clicked the forgot password link now at the adding the event listener"
-      );
       event.preventDefault();
 
       openModal("forgotPasswordModal");
@@ -35,7 +32,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
       openModal("registerModal");
     });
 
-  //! function for opening the modal
+  //! function for opening the modalsdf
 
   function openModal(modalId) {
     document.getElementById(modalId).style.display = "block";
@@ -43,12 +40,10 @@ document.addEventListener("DOMContentLoaded", (event) => {
     loginInputs.forEach((input) => {
       input.disabled = true;
     });
-    console.log("This is open modal function", modalId);
   }
 
   //! function for closing the modal
   function closeModal(modalId) {
-    console.log("inside the closing modal function", modalId);
     const loginInputs = document.querySelectorAll("#loginForm input");
     loginInputs.forEach((input) => {
       input.disabled = false;
@@ -62,13 +57,10 @@ document.addEventListener("DOMContentLoaded", (event) => {
   //for future reference---checks if any of them are present and then it will change the style to display none
 
   window.onclick = function (event) {
-    console.log("inside window.onclick");
-
     // if (
     //   event.target.classList.contains("modal-for-forgot-password") ||
     //   event.target.classList.contains("modal-for-register")
     // ) {
-    //   console.log("inside the if condition");
     //   event.target.style.display = "none";
     // }
   };
@@ -76,13 +68,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
   window.closeModal = closeModal;
 });
 
-//!function for toggling the password eye
+//function for toggling the password eye
 function passwordToggler(idOfTheIcon, idOfThePassword) {
-  console.log("this is the element of the icon", idOfTheIcon);
-  console.log("this is the element of the password", idOfThePassword);
-
-  console.log("The icon for for login password is clicked ");
-
   const type =
     idOfThePassword.getAttribute("type") === "password" ? "text" : "password";
 
@@ -93,33 +80,20 @@ function passwordToggler(idOfTheIcon, idOfThePassword) {
   idOfTheIcon.classList.toggle("bx-hide");
 }
 
-//!function for showing errors
+//function for showing errors
 
 function showError(element, message) {
   // Check if the element exists before proceeding
   if (!element) {
-    console.log(
-      "inside the if condition .The element is not created, cannot show error."
-    );
     return;
   }
-  console.log(
-    "This is the element's name for which ERROR-DIV is created:  ",
-    element
-  );
-
 
   const errorSpan = document.createElement("div");
-  console.log("Error errorSpan: ", errorSpan);
-
 
   const existingError = document.getElementById(element.id + "-error");
   if (existingError) {
-    console.log("existing error-div found");
     existingError.textContent = message;
   } else {
-    console.log("NO EXISTING ERROR DIV");
-    console.log("Creating error-div for :", element);
     errorSpan.className = "error-message";
     errorSpan.textContent = message;
     errorSpan.id = element.id + "-error";
@@ -127,60 +101,103 @@ function showError(element, message) {
   }
 }
 
-//! function for clearing errors
+// function for clearing errors
 
 function clearErrors() {
   const errors = document.querySelectorAll(".error-message");
   errors.forEach((error) => error.remove());
 }
 
-//!   function for handling the login submission
+//   function for handling the login submission
 
 async function handleLogin() {
-  console.log("inside the handleLogin()");
   clearErrors();
 
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value.trim();
   const rememberMe = document.getElementById("remember").checked;
+  const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
   let valid = true;
 
-  if (!email) {
-    console.log("Email not entered");
-    showError(document.getElementById("email"), "Email is required");
-    valid = false;
+  if (emailPattern.test(email)) {
+    document.getElementById("patternIndicatorEmailLogin").textContent =
+      "Valid email";
+    document.getElementById("patternIndicatorEmailLogin").style.color =
+      "#00ff08";
+  } else {
+    document.getElementById("patternIndicatorEmailLogin").textContent = "";
+    showError(document.getElementById("email"), "Not a valid format");
+    document.getElementById("pattern-indicator");
+    valid = false
   }
 
-  if (!password) {
-    console.log("password not entered");
-    showError(document.getElementById("password"), "Password is required");
-    valid = false;
+  if (password.length < 8) {
+    document.getElementById("passwordStrength").textContent = "";
+    document.getElementById("passwordStrength").textContent =
+      "Must be aleast 8 characters";
+    document.getElementById("passwordStrength").style.color = "red";
+    if (password.length < 1) {
+      document.getElementById("passwordStrength").textContent = "";
+      document.getElementById("passwordStrength").textContent =
+        "Must enter a password";
+      document.getElementById("passwordStrength").style.color = "red";
+    }
+    valid = false
   }
 
   if (!valid) {
+    console.log('not valid')
     return;
+  }else{
+    console.log('inside handle login else')
+    if (rememberMe) {
+      localStorage.setItem("rememberedUsername", email);
+    } else {
+      localStorage.removeItem("rememberedUsername");
+    }
+  
+    const dataToSend = {
+      email: email,
+      password: password,
+    };
+  
+    try {
+      const response = await fetch("/", {
+        method: "POST",
+        headers: {
+          "content-Type": "application/json",
+        },
+        body: JSON.stringify(dataToSend),
+      });
+  
+      const result = await response.json();
+  
+      if (result.success) {
+        window.location.href = "/userHome";
+      } else {
+        console.log('inside handle login else')
+        document.getElementById("patternIndicatorEmailLogin").textContent = result.message;      
+        document.getElementById("patternIndicatorEmailLogin").style.color = "red";  
+      }
+    } catch (error) {
+      console.error(("error occurred during login ", error));
+    }
   }
 
-  if (rememberMe) {
-    localStorage.setItem("rememberedUsername", username);
-  } else {
-    localStorage.removeItem("rememberedUsername");
-  }
+  
 }
 
-//!function for handling the register modal submission
+//function for handling the register modal submission
 async function handleRegister() {
-  console.log("Inside the handleRegister() function....");
   clearErrors();
-  console.log("After clearErrors() inside the handleRegister function");
 
   const username = document.getElementById("registerUser").value;
-
   const email = document.getElementById("registerEmail").value;
-
   const password = document.getElementById("registerPassword").value;
-  const referalCode = document.getElementById("referalCode").value;
+  const referedcode = document.getElementById("referedcode").value;
+  const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  const emailIndicator = document.getElementById("patternIndicatorRegister");
 
   let valid = true;
 
@@ -193,50 +210,105 @@ async function handleRegister() {
     showError(document.getElementById("registerEmail"), "Email is required");
     valid = false;
   }
+  if (!emailPattern.test(email)) {
+    showError(document.getElementById("registerEmail"), "Invalid email format");
+    emailIndicator.textContent = "";
 
-  if (!password) {
-    showError(
-      document.getElementById("registerPassword"),
-      "Password is required"
-    );
     valid = false;
   }
 
   if (password.length < 8) {
+    if (!password) {
+      showError(
+        document.getElementById("registerPassword"),
+        "Password is required"
+      );
+      valid = false;
+    }
+
     valid = false;
+    showError(
+      document.getElementById("registerPassword"),
+      "Password must be at least 8 characters long"
+    );
   }
 
   if (!valid) {
-    console.log("NOT VALID");
     return;
   }
 
   try {
-    const response = await fetch("/", {
+    const response = await fetch("/userSignup", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ username, email, password }),
+      body: JSON.stringify({ username, email, referedcode, password }),
     });
 
     const result = await response.json();
 
-    if (response.ok) {
-      alert("Registration successful");
-      closeModal("registerModal");
-    } else {
-      showError(document.getElementById("registerPass"), result.message);
+    if (response.ok && result.redirect) {
+      let countdown = 3; // Starting countdown time in seconds
+
+      Swal.fire({
+        title: "Please Wait",
+        html: `<p>Generating OTP in <strong>${countdown}</strong> seconds...</p>`, // Include <strong> here
+        iconHtml: '<i class="fa-solid fa-shield"></i>',
+        iconColor: "#f56318", // Change icon color
+        background: "#000000", // Change background color
+
+        showConfirmButton: false,
+        customClass: {
+          popup: "custom-swal-popup",
+          title: "custom-swal-title",
+          htmlContainer: "custom-swal-text",
+        },
+        willOpen: () => {
+          // Set interval to update countdown every second
+          const timerInterval = setInterval(() => {
+            countdown -= 1;
+
+            const htmlContainer = Swal.getHtmlContainer();
+            if (htmlContainer) {
+              const countdownDisplay = htmlContainer.querySelector("strong");
+              if (countdownDisplay) {
+                console.log;
+                countdownDisplay.textContent = countdown;
+              }
+            }
+
+            if (countdown <= 0) {
+              clearInterval(timerInterval);
+              Swal.close();
+              window.location.href = "/otpVerification";
+            }
+          }, 1000);
+        },
+      });
+    }
+
+    if (response.status === 409) {
+      const registerEmailIndicator = document.getElementById(
+        "passwordStrengthRegister"
+      );
+      if (registerEmailIndicator != "") {
+        registerEmailIndicator.textContent = "";
+      }
+      showError(document.getElementById("registerEmail"), result.message);
+
+      return;
     }
   } catch (error) {
+    console.log("error from catch", error);
     showError(
-      document.getElementById("registerPass"),
+      document.getElementById("registerFailed"),
       "Registration failed. Please try again."
     );
   }
 }
 
-//! function for handling the forgot password
+// function for handling the forgot password
 async function handleForgotPassword() {
   clearErrors();
   clearEmailIndicator();
@@ -279,23 +351,18 @@ async function handleForgotPassword() {
   }
 }
 
-//!function for email pattern
+//function for email pattern
 
 function emailChecker(email, Indicator, errorDiv) {
-  console.log("This is error.......", errorDiv);
-  console.log("inside the emailChecker()");
-  console.log(Indicator);
-
   const patternIndicator = Indicator;
   const emailError = errorDiv;
-
-  console.log("inside the the focusing");
 
   if (email.length == 0) {
     patternIndicator.textContent = "";
     patternIndicator.style.color = "";
   }
-  if (email.length == 1) {
+
+  if (email.length >= 1) {
     patternIndicator.textContent = "That is not an email";
     patternIndicator.style.color = "orange";
     if (emailError != null) {
@@ -303,58 +370,61 @@ function emailChecker(email, Indicator, errorDiv) {
     }
   }
 
+  if (email.length == 2) {
+    patternIndicator.textContent = "That's not an email...";
+    patternIndicator.style.color = "orange";
+  }
   if (email.length == 3) {
     patternIndicator.textContent = "Okay go on.......";
     patternIndicator.style.color = "red";
   }
 
-  if (email.includes("@")) {
-    patternIndicator.textContent = "Don't fool me using the @ symbol....";
-    patternIndicator.style.color = "#03fc84";
-  }
-
-  if (email.length == 5) {
+  if (email.length >= 5) {
     patternIndicator.textContent = "Still not an email......";
     patternIndicator.style.color = "orange";
+  }
+  if (email.includes("@")) {
+    patternIndicator.textContent = "That's an email";
+    patternIndicator.style.color = "#03fc84";
   }
 
   if (email.length >= 6) {
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (emailError != null) {
+      emailError.textContent = "";
+    }
 
     if (emailPattern.test(email)) {
-      patternIndicator.textContent = "Is it your real email..? Looks cool";
+      patternIndicator.textContent = "Valid email";
       patternIndicator.style.color = "#00ff08";
-      clearErrors();
     }
   }
 }
 
-//!function for clear the email suggestions
+//function for clear the email suggestions
 
 function clearEmailIndicator() {
   const indicator = document.getElementById("patternIndicatorRegister");
   indicator.textContent = "";
 }
 
-//!function for checking password strength during login
+//function for checking password strength during login
 
 function checkPasswordStrength(password) {
-  console.log("Inside the checkPasswordStrength()");
   const strengthIndicator = document.getElementById("passwordStrength");
   checkPasswordLength(password, strengthIndicator);
 }
 
-//!checking the password strength during register
+//checking the password strength during register
 
 function checkPasswordStrengthRegister(password) {
   const strengthIndicator = document.getElementById("passwordStrengthRegister");
   updatePasswordStrength(password, strengthIndicator);
 }
 
-//! (-----FOR LOGIN-----)   the conditions for showing the color for password-strength length
+// (-----FOR LOGIN-----)   the conditions for showing the color for password-strength length
 
 function checkPasswordLength(password, strengthIndicator) {
-  console.log("Inside the checkPasswordLength()");
   const passwordError = document.getElementById("password-error");
 
   if (password.length == 0) {
@@ -382,8 +452,14 @@ function checkPasswordLength(password, strengthIndicator) {
   }
 }
 
+function userNameChecker(username, errorDiv) {
+  if (username.length >= 1) {
+    errorDiv.textContent = "";
+  }
+}
+
 function updatePasswordStrength(password, strengthIndicator) {
-  console.log('inside the updatePasswordStrength()');
+  const indicator = document.getElementById("registerPassword-error");
   // Reset indicator
   strengthIndicator.textContent = "";
 
@@ -397,21 +473,14 @@ function updatePasswordStrength(password, strengthIndicator) {
   let strength = 0;
 
   if (password.length == 0) {
-    console.log(
-      "inside the function updatePassword >>   inside the if condition for checking if the length of the password === 0"
-    );
     strength = 0;
   }
- 
+
   if (password.length >= minLength) {
     strength++;
   }
-  if(password.length > 0  ){
-  
-    const indicator = document.getElementById("registerPassword-error");
+  if (password.length > 0 && indicator != null) {
     indicator.textContent = "";
-
-    console.log('inside the updatePasswordStrength()  --> ---> ---> inside the if condition for checking if the length of the password is greater than 0');
   }
 
   // Check uppercase letters
@@ -436,7 +505,6 @@ function updatePasswordStrength(password, strengthIndicator) {
   ) {
     strength++;
   }
-
 
   // Update strength indicator
   switch (strength) {
@@ -464,14 +532,9 @@ function updatePasswordStrength(password, strengthIndicator) {
   }
 }
 
-function clearErrorIfExist(passwordInput){
-  console.log('inside the clearErrorIfExist()')
- if(passwordInput.length > 0){
-  
+function clearErrorIfExist(passwordInput) {
+  if (passwordInput.length > 0) {
     const indicator = document.getElementById("registerPassword-error");
     indicator.textContent = "";
   }
 }
-
-
-

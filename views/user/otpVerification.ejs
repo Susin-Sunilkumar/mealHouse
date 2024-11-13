@@ -1,68 +1,19 @@
-<!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OTP Verification</title>
     <link rel="stylesheet" href="/styles/user/otpVerification.css">
-    <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(to bottom, #ff9a9e, #fad0c4);
-            color: #2b3a42;
-        }
-
-        form {
-            max-width: 500px;
-            margin-top: 5rem;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            background-color: #ffffff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            background: linear-gradient(to bottom, #ffecd2, #fcb69f);
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .error-message {
-            color: red;
-        }
-
-        #timer {
-            text-align: center;
-            margin-top: 20px;
-        }
-        #resend-button {
-  background-color: #4CAF50; /* Green background */
-  color: white; /* White text color */
-  border: none; /* No border */
-  padding: 10px 20px; /* Padding */
-  text-decoration: none; /* No underline */
- 
-  font-size: 16px; /* Font size */
-  cursor: pointer; /* Cursor style */
-  border-radius: 4px; /* Rounded corners */
-}
-
-#resend-button:hover {
-  background-color: #45a049; /* Darker green on hover */
-}
-    </style>
+   
 </head>
 <body>
-    <form id="otpForm" action="/otpVerification" method="post">
+    <div class="outer-div">
+        <form id="otpForm" action="/otpVerification" method="post">
         <div class="title" id='mainDiv'>
             <h1>OTP VERIFICATION</h1>
-            <p style="color: black;" class="info">
                 <h3>An OTP has been sent to</h3>
-                <span style="color: green;"><%=email%></span>
+                <span ><%=email%></span>
             </p>
             <div style="display: flex; align-items: center; justify-content: center;">
                 <p class="msg">Please enter OTP to verify</p>
@@ -87,6 +38,8 @@
         </div>
        
     </form>
+    </div>
+
 
     
 

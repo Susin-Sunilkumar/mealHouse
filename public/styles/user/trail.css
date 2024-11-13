@@ -1,4 +1,6 @@
-/* General styles */
+html, body {
+  overflow-x: hidden;
+}
 body {
   color: white;
   margin: 0;
@@ -8,7 +10,6 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(to right, #f56318, #8a0c0e);
   background-image: url("/img/login-bg.jpg");
   background-size: cover;
   background-position: center; /* Centers the image */
@@ -311,7 +312,7 @@ form {
 .div-for-login-with {
   display: flex;
   justify-content: space-evenly;
-  margin: 1rem 0rem 3rem 0rem;
+  margin: 1rem 0rem 1rem 0rem;
   font-size: 2rem;
 }
 
@@ -325,6 +326,7 @@ form {
   }
   .remember-forgot {
     gap: 8rem;
+    margin: 0rem 0rem 0rem 0rem;
   }
 }
 
@@ -373,11 +375,12 @@ form {
 
   .remember-forgot {
     gap: 3.7rem;
-  }
 
-  .remember-forgot {
+    margin: 1rem 0rem 1rem 0rem;
+
     font-size: 0.9rem;
   }
+
   .signup-link {
     margin: 1rem 1rem 1rem 1rem;
   }
